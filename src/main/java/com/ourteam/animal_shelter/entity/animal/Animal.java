@@ -24,3 +24,5 @@ public class Animal extends NamedEntity {
         isHealthy = healthy;
     }
 }
+
+

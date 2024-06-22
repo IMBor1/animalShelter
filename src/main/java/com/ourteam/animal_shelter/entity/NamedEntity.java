@@ -1,5 +1,7 @@
 package com.ourteam.animal_shelter.entity;
 
+import com.ourteam.animal_shelter.exception.ValidationException;
+import com.ourteam.animal_shelter.service.Validation;
 import jakarta.persistence.Column;
 
 public class NamedEntity extends BaseEntity {
@@ -11,6 +13,9 @@ public class NamedEntity extends BaseEntity {
     }
 
     public void setName(String name) {
+        if (!Validation.validateBaseStr(name)) {
+            throw new ValidationException(name);
+        }
         this.name = name;
     }
 }

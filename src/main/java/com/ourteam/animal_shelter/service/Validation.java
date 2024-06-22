@@ -3,7 +3,6 @@ package com.ourteam.animal_shelter.service;
 import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import static liquibase.util.SqlUtil.NAME_PATTERN;
 @Service
 public class Validation {

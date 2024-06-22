@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Класс, в котором принимаются ответы от пользователя, обрабатываются и выдается ответ.
+ * Метод обработки и отправки данных  {@link #process(List)}
+ */
+
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
@@ -29,6 +34,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.setUpdatesListener(this);
     }
 
+    /**
+     * Метод для взаимодействия бота с пользователем
+     *
+     * @param updates
+     * @return ответ на запрос пользователя
+     * @throws Exception если зеачение update не корректное.
+     */
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {

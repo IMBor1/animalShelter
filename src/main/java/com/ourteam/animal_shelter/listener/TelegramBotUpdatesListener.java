@@ -1,20 +1,18 @@
 package com.ourteam.animal_shelter.listener;
 
+import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 /**
  * Класс, в котором принимаются ответы от пользователя, обрабатываются и выдается ответ.
@@ -26,8 +24,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
-    private TelegramBot telegramBot;
+
+    private final TelegramBot telegramBot;
+    private final Buttons buttons;
+
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, Buttons buttons) {
+        this.telegramBot = telegramBot;
+        this.buttons = buttons;
+    }
 
     @PostConstruct
     public void init() {
@@ -47,36 +51,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             if (update.message() != null) {
                 try {
                     logger.info("Processing update: {}", update);
-                    String comMsg = update.message().text();
-                    Long chatId = update.message().chat().id();
-                    if (comMsg.equalsIgnoreCase("/start")) {
-                        SendResponse response = telegramBot.execute(new SendMessage(chatId, Constants.MEET));
-                    }
-
-                    InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Узнать информацию о приюте").callbackData("/c1"),
-                            new InlineKeyboardButton(
-                                    "Как взять животное из приюта").callbackData("/c2"));
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Прислать отчет о питомце").callbackData("/c3"),
-                            new InlineKeyboardButton(
-                                    "Позвать волонтера").callbackData("/c4"));
-                    SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
-                            replyMarkup(markup);
-                    telegramBot.execute(send);
-
+                    buttons.ButtonsStage_0(update);
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
             } else if (update.callbackQuery() != null) {
                 String text = update.callbackQuery().data();
-                long chat_Id = update.callbackQuery().message().chat().id();
-                String path = " Для связи с волонтером позвоните по телефону +7-900-100-20-10";
 
+                try {
+                    buttons.buttonsStage_1(update);
+                    text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/c1")) {
+                    } else if (text.equalsIgnoreCase("/c4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
+                    }
 
-                if (text.equalsIgnoreCase("/c4")) {
-                    telegramBot.execute(new SendMessage(chat_Id, path));
+                } catch (NullPointerException e) {
+                    logger.error("update is null");
                 }
             }
         });

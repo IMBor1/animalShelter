@@ -58,6 +58,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     if (comMsg.equalsIgnoreCase("/start")) {
                         SendResponse response = telegramBot.execute(new SendMessage(chatId, Constants.MEET));
                     }
+
                     InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
                     markup.addRow(new InlineKeyboardButton(
                                     "Узнать информацию о приюте").callbackData("/c1"),
@@ -77,7 +78,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } else if (update.callbackQuery() != null) {
                 String text = update.callbackQuery().data();
                 long chat_Id = update.callbackQuery().message().chat().id();
-                String path = " Для связи с волонтером напишите по телефону +7-900-100-20-10";
+                String path = " Для связи с волонтером позвоните по телефону +7-900-100-20-10";
 
 
                 if (text.equalsIgnoreCase("/c4")) {

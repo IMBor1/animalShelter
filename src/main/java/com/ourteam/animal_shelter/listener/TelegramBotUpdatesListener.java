@@ -1,8 +1,9 @@
 package com.ourteam.animal_shelter.listener;
 
 
-import com.ourteam.animal_shelter.service.AddressPhotoService;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Report;
+import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,7 +30,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     @Autowired
-    private AddressPhotoService addressPhotoService;
+    private ReportPhotoService reportPhotoService;
+
 
     @Autowired
     private TelegramBot telegramBot;
@@ -86,15 +87,28 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
                 if (text.equalsIgnoreCase("/c1")) {
                     try {
-                        SendResponse response = telegramBot.execute(
-                                addressPhotoService.sendAddressPhoto(chatId,
-                                        addressPhotoService.findAddressPhoto(1L).getFilePath(),
-                                        "Наш адрес: г. Москва, Камергерский переулок, 6/5с3" +
-                                                "\nРасписание работы: \nПн - Пт: c 09:00 до 18:00; \n" +
-                                                "Сб,Вс - выходные дни."));
+                    Report report = reportPhotoService.getAddressPhoto();
+                        SendResponse execute = telegramBot.execute(reportPhotoService.sendReportPhoto(
+                                chat_Id,
+                                report.getAnimalPhoto().getData(),
+                                report.getCaption()
+                        ));
 
-                    } catch (IOException e) {
-                        logger.error("File not found");
+                    } catch (RuntimeException e) {
+                    logger.error("File not correct");
+                }
+                }
+                if (text.equalsIgnoreCase("/c3")) {
+                    try {
+                        Report report = reportPhotoService.getReportForm();
+                        SendResponse execute = telegramBot.execute(reportPhotoService.sendReportPhoto(
+                                chat_Id,
+                                report.getAnimalPhoto().getData(),
+                                report.getCaption()
+                        ));
+
+                    } catch (RuntimeException e) {
+                        logger.error("File not correct");
                     }
                 }
 

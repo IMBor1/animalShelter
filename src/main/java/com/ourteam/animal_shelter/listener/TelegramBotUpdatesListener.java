@@ -55,14 +55,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
-            } else if (update.callbackQuery() != null) {
-                String text = update.callbackQuery().data();
+            }
+            if (update.callbackQuery() != null) {
 
                 try {
-                    buttons.buttonsStage_1(update);
-                    text = update.callbackQuery().data();
+                    String text = update.callbackQuery().data();
                     if (text.equalsIgnoreCase("/c1")) {
-                    } else if (text.equalsIgnoreCase("/c4")) {
+                        buttons.buttonsStage_1(update);
+                        text = update.callbackQuery().data();
+
+                    } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
                         telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
                     }
 

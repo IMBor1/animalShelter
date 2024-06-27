@@ -52,25 +52,36 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 try {
                     logger.info("Processing update: {}", update);
                     buttons.ButtonsStage_0(update);
+
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
-            }
-            if (update.callbackQuery() != null) {
+            } else if (update.callbackQuery() != null) {
 
-                try {
-                    String text = update.callbackQuery().data();
-                    if (text.equalsIgnoreCase("/c1")) {
-                        buttons.buttonsStage_1(update);
-                        text = update.callbackQuery().data();
 
-                    } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
-                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
-                    }
-
-                } catch (NullPointerException e) {
-                    logger.error("update is null");
+                long chat_Id = update.callbackQuery().message().chat().id();
+                String text = update.callbackQuery().data();
+                if (text.equalsIgnoreCase("/c1")) {
+                    buttons.buttonsStage_1(update);
+                } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
+                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
                 }
+                text = update.callbackQuery().data();
+                if (text.equalsIgnoreCase("/a1")) {
+                    telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
+                } else if (text.equalsIgnoreCase("/a2")) {
+                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.SHEDULE));
+                } else if (text.equalsIgnoreCase("/a3")) {
+                    telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
+                } else if (text.equalsIgnoreCase("/a4")) {
+                    telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
+//        }else if (text.equalsIgnoreCase("/c5")) {
+//            telegramBot.execute(new SendMessage(chat_Id, Constants.SHEDULE));
+                } else if (text.equalsIgnoreCase("/a6")) {
+                    telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                }
+
+
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

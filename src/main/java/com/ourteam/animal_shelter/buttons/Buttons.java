@@ -35,10 +35,10 @@ public class Buttons {
         SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
                 replyMarkup(markup);
         telegramBot.execute(send);
+
     }
 
     public void buttonsStage_1(Update update) {
-        String text = update.callbackQuery().data();
         long chat_Id = update.callbackQuery().message().chat().id();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.addRow(new InlineKeyboardButton(
@@ -56,19 +56,7 @@ public class Buttons {
         SendMessage send = new SendMessage(chat_Id, "Выберете один из вариантов:").
                 replyMarkup(markup);
         telegramBot.execute(send);
-        if (update.callbackQuery().data().equalsIgnoreCase("/a1")) {
-            telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
-        } else if (text.equalsIgnoreCase("/a2")) {
-            telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.SHEDULE));
-        } else if (text.equalsIgnoreCase("/a3")) {
-            telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
-        } else if (text.equalsIgnoreCase("/a4")) {
-            telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
-//        }else if (text.equalsIgnoreCase("/c5")) {
-//            telegramBot.execute(new SendMessage(chat_Id, Constants.SHEDULE));
-        } else if (text.equalsIgnoreCase("/a6")) {
-            telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
-        }
+
 
     }
 }

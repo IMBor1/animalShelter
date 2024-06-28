@@ -2,6 +2,7 @@ package com.ourteam.animal_shelter.listener;
 
 import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -59,31 +60,37 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     logger.error("update not correct");
                 }
             } else if (update.callbackQuery() != null) {
+                try {
 
-
-                long chat_Id = update.callbackQuery().message().chat().id();
-                String text = update.callbackQuery().data();
-                if (text.equalsIgnoreCase("/c1")) {
-                    buttons.buttonsStage_1(update);
-                } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
-                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
+                    long chat_Id = update.callbackQuery().message().chat().id();
+                    String text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/c1")) {
+                        buttons.buttonsStage_1(update);
+                    } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
+                    }
+                    text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/a1")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
+                    } else if (text.equalsIgnoreCase("/a2")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.SHEDULE));
+                    } else if (text.equalsIgnoreCase("/a3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
+                    } else if (text.equalsIgnoreCase("/a4")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
+                    } else if (text.equalsIgnoreCase("/a5")) {
+                        clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
+                                update.callbackQuery().message().chat().username()));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
+                        if (update.message().contact().phoneNumber() != null) {
+                            clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
+                        }
+                    } else if (text.equalsIgnoreCase("/a6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                    }
+                } catch (Exception e) {
+                    logger.error("update not correct");
                 }
-                text = update.callbackQuery().data();
-                if (text.equalsIgnoreCase("/a1")) {
-                    telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
-                } else if (text.equalsIgnoreCase("/a2")) {
-                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.SHEDULE));
-                } else if (text.equalsIgnoreCase("/a3")) {
-                    telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
-                } else if (text.equalsIgnoreCase("/a4")) {
-                    telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
-//        }else if (text.equalsIgnoreCase("/c5")) {
-                    //        clientRepository.save(new Client(update.callbackQuery().message().chat().id(), update.message().forwardSenderName()));
-//            telegramBot.execute(new SendMessage(chat_Id, Constants.SHEDULE));
-                } else if (text.equalsIgnoreCase("/a6")) {
-                    telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
-                }
-
 
             }
         });

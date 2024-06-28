@@ -25,6 +25,7 @@ public class Client {
     public Client(long chatId, String name) {
         this.chatId = chatId;
         this.name = name;
+
     }
 
     public long getId() {

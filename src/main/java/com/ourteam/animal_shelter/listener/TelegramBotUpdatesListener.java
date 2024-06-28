@@ -2,6 +2,7 @@ package com.ourteam.animal_shelter.listener;
 
 import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -24,11 +25,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-
+    private final ClientRepository clientRepository;
     private final TelegramBot telegramBot;
     private final Buttons buttons;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, Buttons buttons) {
+    public TelegramBotUpdatesListener(ClientRepository clientRepository, TelegramBot telegramBot, Buttons buttons) {
+        this.clientRepository = clientRepository;
         this.telegramBot = telegramBot;
         this.buttons = buttons;
     }
@@ -39,7 +41,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Метод для взаимодействия бота с пользователем
+     * Метод для взаимодействия бота с пользователем с помощью кнопок
      *
      * @param updates
      * @return ответ на запрос пользователя
@@ -76,6 +78,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 } else if (text.equalsIgnoreCase("/a4")) {
                     telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
 //        }else if (text.equalsIgnoreCase("/c5")) {
+                    //        clientRepository.save(new Client(update.callbackQuery().message().chat().id(), update.message().forwardSenderName()));
 //            telegramBot.execute(new SendMessage(chat_Id, Constants.SHEDULE));
                 } else if (text.equalsIgnoreCase("/a6")) {
                     telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));

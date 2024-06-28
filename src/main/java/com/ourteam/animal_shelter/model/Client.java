@@ -22,6 +22,11 @@ public class Client {
     @Column(name = "phone")
     private String phone;
 
+    public Client(long chatId, String name) {
+        this.chatId = chatId;
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }

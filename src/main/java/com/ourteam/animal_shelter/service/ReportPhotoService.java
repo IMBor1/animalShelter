@@ -73,13 +73,14 @@ public class ReportPhotoService {
     }
 
     /**
-     * Создает фотографию с описанием для отправки в телеграм бот
-     * @param chatId - айди чата
-     * @param filePhoto - массив байтов фотографии
-     * @param caption - описание в текстовом формате
+     * Создает из отчета фотографию с описанием для отправки в телеграм бот
+     * @param chatId айди чата
+     * @param report объект класса {@link Report}
      * @return - возвращает экземпляр класса {@link SendPhoto}
      */
-    public SendPhoto sendReportPhoto(Long chatId, byte[] filePhoto, String caption) {
+    public SendPhoto sendReportPhoto(Long chatId, Report report) {
+        String caption = report.getCaption();
+        byte[] filePhoto = report.getAnimalPhoto().getData();
         SendPhoto sendPhoto = new SendPhoto(chatId, filePhoto);
         sendPhoto.caption(caption);
         return sendPhoto;

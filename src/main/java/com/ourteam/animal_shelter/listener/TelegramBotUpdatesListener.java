@@ -1,13 +1,14 @@
 package com.ourteam.animal_shelter.listener;
 
+import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Client;
+import com.ourteam.animal_shelter.repository.ClientRepository;
+import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     if (text.equalsIgnoreCase("/a1")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
                     } else if (text.equalsIgnoreCase("/a2")) {
-                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.SHEDULE));
+                        telegramBot.execute(reportPhotoService.sendReportPhoto(chat_Id, reportPhotoService.getAddressPhoto()));
                     } else if (text.equalsIgnoreCase("/a3")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
                     } else if (text.equalsIgnoreCase("/a4")) {

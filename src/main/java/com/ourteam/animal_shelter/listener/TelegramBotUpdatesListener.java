@@ -1,20 +1,20 @@
 package com.ourteam.animal_shelter.listener;
 
+import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Client;
+import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 /**
  * Класс, в котором принимаются ответы от пользователя, обрабатываются и выдается ответ.
@@ -26,8 +26,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
-    private TelegramBot telegramBot;
+    private final ClientRepository clientRepository;
+    private final TelegramBot telegramBot;
+    private final Buttons buttons;
+
+    public TelegramBotUpdatesListener(ClientRepository clientRepository, TelegramBot telegramBot, Buttons buttons) {
+        this.clientRepository = clientRepository;
+        this.telegramBot = telegramBot;
+        this.buttons = buttons;
+    }
 
     @PostConstruct
     public void init() {
@@ -35,7 +42,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Метод для взаимодействия бота с пользователем
+     * Метод для взаимодействия бота с пользователем с помощью кнопок
      *
      * @param updates
      * @return ответ на запрос пользователя
@@ -47,36 +54,44 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             if (update.message() != null) {
                 try {
                     logger.info("Processing update: {}", update);
-                    String comMsg = update.message().text();
-                    Long chatId = update.message().chat().id();
-                    if (comMsg.equalsIgnoreCase("/start")) {
-                        SendResponse response = telegramBot.execute(new SendMessage(chatId, Constants.MEET));
-                    }
-                    InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Узнать информацию о приюте").callbackData("/c1"),
-                            new InlineKeyboardButton(
-                                    "Как взять животное из приюта").callbackData("/c2"));
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Прислать отчет о питомце").callbackData("/c3"),
-                            new InlineKeyboardButton(
-                                    "Позвать волонтера").callbackData("/c4"));
-                    SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
-                            replyMarkup(markup);
-                    telegramBot.execute(send);
+                    buttons.ButtonsStage_0(update);
 
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
             } else if (update.callbackQuery() != null) {
-                String text = update.callbackQuery().data();
-                long chat_Id = update.callbackQuery().message().chat().id();
-                String path = " Для связи с волонтером напишите по телефону +7-900-100-20-10";
+                try {
 
-
-                if (text.equalsIgnoreCase("/c4")) {
-                    telegramBot.execute(new SendMessage(chat_Id, path));
+                    long chat_Id = update.callbackQuery().message().chat().id();
+                    String text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/c1")) {
+                        buttons.buttonsStage_1(update);
+                    } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
+                    }
+                    text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/a1")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
+                    } else if (text.equalsIgnoreCase("/a2")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.SHEDULE));
+                    } else if (text.equalsIgnoreCase("/a3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
+                    } else if (text.equalsIgnoreCase("/a4")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
+                    } else if (text.equalsIgnoreCase("/a5")) {
+                        clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
+                                update.callbackQuery().message().chat().username()));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
+                        if (update.message().contact().phoneNumber() != null) {
+                            clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
+                        }
+                    } else if (text.equalsIgnoreCase("/a6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                    }
+                } catch (Exception e) {
+                    logger.error("update not correct");
                 }
+
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

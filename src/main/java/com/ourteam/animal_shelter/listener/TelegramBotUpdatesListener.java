@@ -1,16 +1,17 @@
 package com.ourteam.animal_shelter.listener;
 
-import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
-import com.ourteam.animal_shelter.model.Client;
-import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,9 @@ import java.util.List;
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+
+    @Autowired
+    private ReportPhotoService reportPhotoService;
 
     private final ClientRepository clientRepository;
     private final TelegramBot telegramBot;
@@ -91,7 +95,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
-
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

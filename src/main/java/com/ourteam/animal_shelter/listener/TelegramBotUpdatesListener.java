@@ -66,6 +66,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     String text = update.callbackQuery().data();
                     if (text.equalsIgnoreCase("/c1")) {
                         buttons.buttonsStage_1(update);
+                    } else if (text.equalsIgnoreCase("/c2")) {
+                        buttons.buttonsStage_2(update);
                     } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
                         telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
                     }
@@ -86,6 +88,35 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
                         }
                     } else if (text.equalsIgnoreCase("/a6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+//                    }  else if (text.equalsIgnoreCase("/b1")) {
+//                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_FOR_MEETING_ANIMALS));
+                    } else if (text.equalsIgnoreCase("/b2")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES_FOR_MEETING_ANIMALS));
+                    } else if (text.equalsIgnoreCase("/b3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOCUMENTS_FOR_ADOPTION));
+                    } else if (text.equalsIgnoreCase("/b4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_TRANSPORTATION));
+                    } else if (text.equalsIgnoreCase("/b5")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_PUPPY));
+                    } else if (text.equalsIgnoreCase("/b6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_DOG));
+                    } else if (text.equalsIgnoreCase("/b7")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RECOMENDATIONS_FOR_HOUSE_FOR_INVALID_PETS));
+                    } else if (text.equalsIgnoreCase("/b8")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOGS_HANDLERS_ADVICE_ON_PRIMARY_COMUNICATION));
+                    } else if (text.equalsIgnoreCase("/b9")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOG_HANDLERS));
+                    } else if (text.equalsIgnoreCase("/b10")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.REASONS_FOR_REFUSAL));
+                    } else if (text.equalsIgnoreCase("/b11")) {
+                        clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
+                                update.callbackQuery().message().chat().username()));
+                        if (update.message().contact().phoneNumber() != null) {
+                            clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
+                        }
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
+                    } else if (text.equalsIgnoreCase("/b12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                     }
                 } catch (Exception e) {

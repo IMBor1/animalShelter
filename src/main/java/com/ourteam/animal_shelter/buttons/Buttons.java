@@ -59,4 +59,36 @@ public class Buttons {
 
 
     }
+
+    public void buttonsStage_2(Update update) {
+        long chat_Id = update.callbackQuery().message().chat().id();
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.addRow(new InlineKeyboardButton(
+                        "Список животных для усыновления").callbackData("/b1"),
+                new InlineKeyboardButton(
+                        "Правила знакомства с животным").callbackData("/b2"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Список документов").callbackData("/b3"),
+                new InlineKeyboardButton(
+                        "Транспортировка животного").callbackData("/b4"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обустройство дома для щенка").callbackData("/b5"),
+                new InlineKeyboardButton(
+                        "Обустройство дома для взрослой собаки").callbackData("/b6"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обустройство дома для животного с ограниченными возможностями").callbackData("/b7"),
+                new InlineKeyboardButton(
+                        "Первичное общение с собакой").callbackData("/b8"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Проверенные кинологи").callbackData("/b9"),
+                new InlineKeyboardButton(
+                        "Причины отказа в усыновлении").callbackData("/b10"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Обратная связь").callbackData("/b11"),
+                new InlineKeyboardButton(
+                        "Позвать волонтера").callbackData("/b12"));
+        SendMessage send = new SendMessage(chat_Id, "Выберете один из вариантов:").
+                replyMarkup(markup);
+        telegramBot.execute(send);
+    }
 }

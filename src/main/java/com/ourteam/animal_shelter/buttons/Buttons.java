@@ -17,6 +17,11 @@ public class Buttons {
         this.telegramBot = telegramBot;
     }
 
+    /**
+     * Запуск бота и Создание кнопок для первоначального меню
+     *
+     * @param update
+     */
     public void ButtonsStage_0(Update update) {
         String comMsg = update.message().text();
         Long chatId = update.message().chat().id();
@@ -38,6 +43,10 @@ public class Buttons {
 
     }
 
+    /**
+     * Создание кнопок для этапа 1(после нажатия на кнопку "Информация о приюте")
+     * @param update
+     */
     public void buttonsStage_1(Update update) {
         long chat_Id = update.callbackQuery().message().chat().id();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
@@ -60,6 +69,10 @@ public class Buttons {
 
     }
 
+    /**
+     *      * Создание кнопок для этапа 2(после нажатия на кнопку "Как взять животное")
+     * @param update
+     */
     public void buttonsStage_2(Update update) {
         long chat_Id = update.callbackQuery().message().chat().id();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();

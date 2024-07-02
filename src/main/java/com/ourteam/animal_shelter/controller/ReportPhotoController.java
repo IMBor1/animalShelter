@@ -27,4 +27,5 @@ public class ReportPhotoController {
         reportPhotoService.uploadReportPhoto(reportId, multipartFile);
         return ResponseEntity.ok().build();
     }
+//
 }

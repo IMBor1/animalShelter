@@ -66,7 +66,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
             } else if (update.callbackQuery() != null) {
                 try {
-
                     long chat_Id = update.callbackQuery().message().chat().id();
                     String text = update.callbackQuery().data();
                     if (text.equalsIgnoreCase("/c1")) {

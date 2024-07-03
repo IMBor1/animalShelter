@@ -13,6 +13,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -31,7 +32,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @Autowired
     private ReportPhotoService reportPhotoService;
-
     private final ClientRepository clientRepository;
     private final TelegramBot telegramBot;
     private final Buttons buttons;
@@ -66,7 +66,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 try {
                     logger.info("Processing update: {}", update);
                     buttons.ButtonsStage_0(update);
-
+                    buttons.buttonsStage_volunteer(update);
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }

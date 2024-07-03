@@ -6,4 +6,5 @@ id Serial,
 chat_Id Integer primary key,
 name Text,
 has_pet Boolean,
-phone Text);
+phone Text,
+timer timeStamp);

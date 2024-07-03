@@ -100,6 +100,8 @@ public class Buttons {
                         "Обратная связь").callbackData("/b11"),
                 new InlineKeyboardButton(
                         "Позвать волонтера").callbackData("/b12"));
+        markup.addRow(new InlineKeyboardButton(
+                "Усыновить животное").callbackData("/b13"));
         SendMessage send = new SendMessage(chat_Id, "Выберете один из вариантов:").
                 replyMarkup(markup);
         telegramBot.execute(send);

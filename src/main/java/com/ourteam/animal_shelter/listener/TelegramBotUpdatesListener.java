@@ -55,13 +55,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 try {
                     logger.info("Processing update: {}", update);
                     buttons.ButtonsStage_0(update);
-
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
             } else if (update.callbackQuery() != null) {
                 try {
-
                     long chat_Id = update.callbackQuery().message().chat().id();
                     String text = update.callbackQuery().data();
                     if (text.equalsIgnoreCase("/c1")) {
@@ -112,17 +110,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     } else if (text.equalsIgnoreCase("/b11")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
                                 update.callbackQuery().message().chat().username()));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
                         }
-                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                     } else if (text.equalsIgnoreCase("/b12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                    } else if (text.equalsIgnoreCase("/b13")) {
+                        clientRepository.findByChatId(chat_Id).setHasPet(true);
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
                     }
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
-
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

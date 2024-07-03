@@ -1,15 +1,15 @@
 package com.ourteam.animal_shelter.controller;
-
-import com.ourteam.animal_shelter.service.ReportPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.ourteam.animal_shelter.service.ReportPhotoService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,4 +42,5 @@ public class ReportPhotoController {
         reportPhotoService.uploadReportPhoto(reportId, multipartFile);
         return ResponseEntity.ok().build();
     }
+//
 }

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,69 +53,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             if (update.message() != null) {
-                try {
-                    logger.info("Processing update: {}", update);
-                    String comMsg = update.message().text();
-                    Long chatId = update.message().chat().id();
-                    if (comMsg.equalsIgnoreCase("/start")) {
-                        SendResponse response = telegramBot.execute(new SendMessage(chatId, Constants.MEET));
-                    }
+                long photoSizeCount = Arrays.stream(update.message().photo()).count();
+                long photoIndex = photoSizeCount > 1 ? photoSizeCount - 1 : 0;
+                byte[] file = Arrays.stream(update.message().photo()).toList().get((int) photoIndex).fileId().getBytes();
+                reportPhotoService.saveReport(file,update.message().caption());
 
-                    InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Узнать информацию о приюте").callbackData("/c1"),
-                            new InlineKeyboardButton(
-                                    "Как взять животное из приюта").callbackData("/c2"));
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Прислать отчет о питомце").callbackData("/c3"),
-                            new InlineKeyboardButton(
-                                    "Позвать волонтера").callbackData("/c4"));
-                    SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
-                            replyMarkup(markup);
-                    telegramBot.execute(send);
-
-                } catch (Exception e) {
-                    logger.error("update not correct");
-                }
-            } else if (update.callbackQuery() != null) {
-                String text = update.callbackQuery().data();
-                long chat_Id = update.callbackQuery().message().chat().id();
-                String path = " Для связи с волонтером позвоните по телефону +7-900-100-20-10";
-
-
-                if (text.equalsIgnoreCase("/c4")) {
-                    telegramBot.execute(new SendMessage(chat_Id, path));
-                }
-                if (text.equalsIgnoreCase("/c1")) {
-                    try {
-                    Report report = reportPhotoService.getAddressPhoto();
-                        SendResponse execute = telegramBot.execute(reportPhotoService.sendReportPhoto(
-                                chat_Id,
-                                report.getAnimalPhoto().getData(),
-                                report.getCaption()
-                        ));
-
-                    } catch (RuntimeException e) {
-                    logger.error("File not correct");
-                }
-                }
-                if (text.equalsIgnoreCase("/c3")) {
-                    try {
-                        Report report = reportPhotoService.getReportForm();
-                        SendResponse execute = telegramBot.execute(reportPhotoService.sendReportPhoto(
-                                chat_Id,
-                                report.getAnimalPhoto().getData(),
-                                report.getCaption()
-                        ));
-
-                    } catch (RuntimeException e) {
-                        logger.error("File not correct");
-                    }
-                }
 
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+
     }
 
 }

@@ -57,7 +57,7 @@ public class Buttons {
         markup.addRow(new InlineKeyboardButton(
                         "Оформление пропуска").callbackData("/a3"),
                 new InlineKeyboardButton(
-                        "Рекомендации техники безопасности").callbackData("/a4"));
+                        "Техника безопасности").callbackData("/a4"));
         markup.addRow(new InlineKeyboardButton(
                         "Обратная связь").callbackData("/a5"),
                 new InlineKeyboardButton(
@@ -77,24 +77,24 @@ public class Buttons {
         long chat_Id = update.callbackQuery().message().chat().id();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.addRow(new InlineKeyboardButton(
-                        "Список животных для усыновления").callbackData("/b1"),
-                new InlineKeyboardButton(
+                "Список животных для усыновления").callbackData("/b1"));
+        markup.addRow(new InlineKeyboardButton(
                         "Правила знакомства с животным").callbackData("/b2"));
         markup.addRow(new InlineKeyboardButton(
                         "Список документов").callbackData("/b3"),
                 new InlineKeyboardButton(
                         "Транспортировка животного").callbackData("/b4"));
         markup.addRow(new InlineKeyboardButton(
-                        "Обустройство дома для щенка").callbackData("/b5"),
-                new InlineKeyboardButton(
+                "Обустройство дома для щенка").callbackData("/b5"));
+        markup.addRow(new InlineKeyboardButton(
                         "Обустройство дома для взрослой собаки").callbackData("/b6"));
         markup.addRow(new InlineKeyboardButton(
-                        "Обустройство дома для животного с ограниченными возможностями").callbackData("/b7"),
-                new InlineKeyboardButton(
+                "Обустройство дома для животного с ограниченными возможностями").callbackData("/b7"));
+        markup.addRow(new InlineKeyboardButton(
                         "Первичное общение с собакой").callbackData("/b8"));
         markup.addRow(new InlineKeyboardButton(
-                        "Проверенные кинологи").callbackData("/b9"),
-                new InlineKeyboardButton(
+                "Проверенные кинологи").callbackData("/b9"));
+        markup.addRow(new InlineKeyboardButton(
                         "Причины отказа в усыновлении").callbackData("/b10"));
         markup.addRow(new InlineKeyboardButton(
                         "Обратная связь").callbackData("/b11"),

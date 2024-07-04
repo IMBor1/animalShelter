@@ -80,7 +80,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
                     } else if (text.equalsIgnoreCase("/a5")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
-                                update.callbackQuery().message().chat().username()));
+                                update.callbackQuery().message().chat().username(), null));
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
@@ -109,7 +109,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.REASONS_FOR_REFUSAL));
                     } else if (text.equalsIgnoreCase("/b11")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
-                                update.callbackQuery().message().chat().username()));
+                                update.callbackQuery().message().chat().username(), false));
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
@@ -117,8 +117,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     } else if (text.equalsIgnoreCase("/b12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                     } else if (text.equalsIgnoreCase("/b13")) {
-                        clientRepository.findByChatId(chat_Id).setHasPet(true);
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
+//                        if (clientRepository.findByChatId(chat_Id) != null) {
+//                            clientRepository.findByChatId(chat_Id).setHasPet(true);
+                        clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true));
+//                        } else {
+//                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(),true));
+//                        }
                     }
                 } catch (Exception e) {
                     logger.error("update not correct");

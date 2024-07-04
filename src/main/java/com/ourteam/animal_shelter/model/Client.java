@@ -25,10 +25,10 @@ public class Client {
     @Column(name = "timer")
     private LocalDateTime localDateTime;
 
-    public Client(long chatId, String name) {
+    public Client(long chatId, String name, Boolean hasPet) {
         this.chatId = chatId;
         this.name = name;
-
+        this.hasPet = hasPet;
     }
 
     public long getId() {

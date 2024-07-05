@@ -80,7 +80,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
                     } else if (text.equalsIgnoreCase("/a5")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
-                                update.callbackQuery().message().chat().username(), null));
+                                update.callbackQuery().message().chat().username()));
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
@@ -109,7 +109,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.REASONS_FOR_REFUSAL));
                     } else if (text.equalsIgnoreCase("/b11")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
-                                update.callbackQuery().message().chat().username(), false));
+                                update.callbackQuery().message().chat().username()));
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
@@ -118,12 +118,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                     } else if (text.equalsIgnoreCase("/b13")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
-//                        if (clientRepository.findByChatId(chat_Id) != null) {
-//                            clientRepository.findByChatId(chat_Id).setHasPet(true);
-                        clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true));
-//                        } else {
-//                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(),true));
-//                        }
+                        Client client = clientRepository.findByChatId(chat_Id);
+                        if (client != null) {
+                            clientRepository.findByChatId(chat_Id).setHasPet(true);
+                            clientRepository.save(client);
+                        } else {
+                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true));
+                        }
                     }
                 } catch (Exception e) {
                     logger.error("update not correct");

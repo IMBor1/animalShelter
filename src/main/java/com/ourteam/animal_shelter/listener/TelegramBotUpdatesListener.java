@@ -122,7 +122,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         Client client = clientRepository.findByChatId(chat_Id);
                         if (client != null) {
                             client.setHasPet(true);
-                            client.setLocalDateTime(LocalDateTime.now());
+                            client.setTimer(LocalDateTime.now());
                             clientRepository.save(client);
                         } else {
                             clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true, LocalDateTime.now()));

@@ -2,6 +2,7 @@ package com.ourteam.animal_shelter.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -21,11 +22,24 @@ public class Client {
 
     @Column(name = "phone")
     private String phone;
+    @Column(name = "timer")
+    private LocalDateTime localDateTime;
+
+    public Client() {
+
+    }
 
     public Client(long chatId, String name) {
         this.chatId = chatId;
         this.name = name;
 
+    }
+
+    public Client(long chatId, String name, boolean hasPet, LocalDateTime localDateTime) {
+        this.chatId = chatId;
+        this.name = name;
+        this.hasPet = hasPet;
+        this.localDateTime = localDateTime;
     }
 
     public long getId() {
@@ -68,18 +82,25 @@ public class Client {
         this.phone = phone;
     }
 
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && Objects.equals(name, client.name) && Objects.equals(phone, client.phone);
+        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && Objects.equals(name, client.name) && Objects.equals(phone, client.phone) && Objects.equals(localDateTime, client.localDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, hasPet, phone);
+        return Objects.hash(id, chatId, name, hasPet, phone, localDateTime);
     }
 
     @Override
@@ -89,8 +110,8 @@ public class Client {
                 ", chatId=" + chatId +
                 ", name='" + name + '\'' +
                 ", hasPet=" + hasPet +
-                ", phone=" + phone +
-                '\'' +
+                ", phone='" + phone + '\'' +
+                ", localDateTime=" + localDateTime +
                 '}';
     }
 }

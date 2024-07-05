@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -60,7 +61,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 try {
                     logger.info("Processing update: {}", update);
                     buttons.ButtonsStage_0(update);
-
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }
@@ -116,12 +116,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     } else if (text.equalsIgnoreCase("/b11")) {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
                                 update.callbackQuery().message().chat().username()));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                         if (update.message().contact().phoneNumber() != null) {
                             clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
                         }
-                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
                     } else if (text.equalsIgnoreCase("/b12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                    } else if (text.equalsIgnoreCase("/b13")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
+                        Client client = clientRepository.findByChatId(chat_Id);
+                        if (client != null) {
+                            client.setHasPet(true);
+                            client.setLocalDateTime(LocalDateTime.now());
+                            clientRepository.save(client);
+                        } else {
+                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true, LocalDateTime.now()));
+                        }
                     }
                 } catch (Exception e) {
                     logger.error("update not correct");

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -120,10 +121,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
                         Client client = clientRepository.findByChatId(chat_Id);
                         if (client != null) {
-                            clientRepository.findByChatId(chat_Id).setHasPet(true);
+                            client.setHasPet(true);
+                            client.setLocalDateTime(LocalDateTime.now());
                             clientRepository.save(client);
                         } else {
-                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true));
+                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true, LocalDateTime.now()));
                         }
                     }
                 } catch (Exception e) {

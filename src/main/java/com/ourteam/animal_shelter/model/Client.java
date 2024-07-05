@@ -25,16 +25,21 @@ public class Client {
     @Column(name = "timer")
     private LocalDateTime localDateTime;
 
+    public Client() {
+
+    }
+
     public Client(long chatId, String name) {
         this.chatId = chatId;
         this.name = name;
 
     }
 
-    public Client(long chatId, String name, boolean hasPet) {
+    public Client(long chatId, String name, boolean hasPet, LocalDateTime localDateTime) {
         this.chatId = chatId;
         this.name = name;
         this.hasPet = hasPet;
+        this.localDateTime = localDateTime;
     }
 
     public long getId() {

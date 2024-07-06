@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 --changeset anton22582258:create_shelter
-create TABLE shelter
+create table shelter
 (
     id                                      bigserial primary key,
     greeting                                text,
@@ -13,10 +13,19 @@ create TABLE shelter
     recommendations_arranging_with_features text
 );
 --changeset anton22582258:create_photo
-create TABLE photo
+create table photo
 (
     id         bigserial primary key,
     file_size  bigint,
     media_type text,
     path       text
+);
+--changeset anton22582258:create_client
+create table client
+(
+    id         bigserial,
+    chat_Id bigint primary key,
+    name       text,
+    has_pet    boolean,
+    phone      text
 );

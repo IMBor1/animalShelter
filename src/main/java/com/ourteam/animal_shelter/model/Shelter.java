@@ -7,15 +7,13 @@ import jakarta.persistence.Id;
 import lombok.Data;
 /**
  * Сущность - питомник для собак
- * {@code greeting} - приветствие пользователя; <br>
- * {@code info} - информация о приюте; <br>
- * {@code datingRules} - правила знакомства с животным до того, как забрать его из приюта; <br>
- * {@code adoptionDocuments} - список документов, необходимых для того, чтобы взять животное из приюта; <br>
- * {@code transportationRecommendations} - список рекомендаций по транспортировке животного; <br>
- * {@code recommendationsArrangingBaby} - список рекомендаций по обустройству дома для щенка; <br>
- * {@code recommendationsArrangingAdult} - список рекомендаций по обустройству дома для взрослого животного; <br>
- * {@code recommendationsArrangingWithFeatures} - список рекомендаций по обустройству дома для животного
- * с ограниченными возможностями (зрение, передвижение); <br>
+ * {@code MEET} - приветствие пользователя; <br>
+ * {@code INFO_SHELTER} - информация о приюте; <br>
+ * {@code SHEDULE} - расписание работы приюта; <br>
+ * {@code GUARD_CONTACTS} - как связаться с охраной и их контактные данные; <br>
+ * {@code RULES} - список рекомендаций по транспортировке животного, список рекомендаций по обустройству дома
+ * для щенка, список рекомендаций по обустройству дома для взрослого животного, список рекомендаций по
+ * обустройству дома для животного с ограниченными возможностями (зрение, передвижение); <br>
  * Содержит стандартные методы геттеры и сеттеры. Конструктор по умолнчанию.
  */
 
@@ -25,28 +23,11 @@ public class Shelter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String greeting;
-    private String info;
-    private String datingRules;
-    private String adoptionDocuments;
-    private String transportationRecommendations;
-    private String recommendationsArrangingBaby;
-    private String recommendationsArrangingAdult;
-    private String recommendationsArrangingWithFeatures;
-
-    public Shelter(Long id, String greeting, String info, String datingRules, String adoptionDocuments,
-                   String transportationRecommendations, String recommendationsArrangingBaby,
-                   String recommendationsArrangingAdult, String recommendationsArrangingWithFeatures) {
-        this.id = id;
-        this.greeting = greeting;
-        this.info = info;
-        this.datingRules = datingRules;
-        this.adoptionDocuments = adoptionDocuments;
-        this.transportationRecommendations = transportationRecommendations;
-        this.recommendationsArrangingBaby = recommendationsArrangingBaby;
-        this.recommendationsArrangingAdult = recommendationsArrangingAdult;
-        this.recommendationsArrangingWithFeatures = recommendationsArrangingWithFeatures;
-    }
+    private String MEET;
+    private String INFO_SHELTER;
+    private String SHEDULE;
+    private String GUARD_CONTACTS;
+    private String RULES;
 
     public Long getId() {
         return id;
@@ -56,67 +37,53 @@ public class Shelter {
         this.id = id;
     }
 
-    public String getGreeting() {
-        return greeting;
+    public String getMEET() {
+        return MEET;
     }
 
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
+    public void setMEET(String MEET) {
+        this.MEET = MEET;
     }
 
-    public String getInfo() {
-        return info;
+    public String getINFO_SHELTER() {
+        return INFO_SHELTER;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setINFO_SHELTER(String INFO_SHELTER) {
+        this.INFO_SHELTER = INFO_SHELTER;
     }
 
-    public String getDatingRules() {
-        return datingRules;
+    public String getSHEDULE() {
+        return SHEDULE;
     }
 
-    public void setDatingRules(String datingRules) {
-        this.datingRules = datingRules;
+    public void setSHEDULE(String SHEDULE) {
+        this.SHEDULE = SHEDULE;
     }
 
-    public String getAdoptionDocuments() {
-        return adoptionDocuments;
+    public String getGUARD_CONTACTS() {
+        return GUARD_CONTACTS;
     }
 
-    public void setAdoptionDocuments(String adoptionDocuments) {
-        this.adoptionDocuments = adoptionDocuments;
+    public void setGUARD_CONTACTS(String GUARD_CONTACTS) {
+        this.GUARD_CONTACTS = GUARD_CONTACTS;
     }
 
-    public String getTransportationRecommendations() {
-        return transportationRecommendations;
+    public String getRULES() {
+        return RULES;
     }
 
-    public void setTransportationRecommendations(String transportationRecommendations) {
-        this.transportationRecommendations = transportationRecommendations;
+    public void setRULES(String RULES) {
+        this.RULES = RULES;
     }
 
-    public String getRecommendationsArrangingBaby() {
-        return recommendationsArrangingBaby;
-    }
+    public Shelter(Long id, String MEET, String INFO_SHELTER, String SHEDULE, String GUARD_CONTACTS, String RULES) {
+        this.id = id;
+        this.MEET = MEET;
+        this.INFO_SHELTER = INFO_SHELTER;
+        this.SHEDULE = SHEDULE;
+        this.GUARD_CONTACTS = GUARD_CONTACTS;
+        this.RULES = RULES;
 
-    public void setRecommendationsArrangingBaby(String recommendationsArrangingBaby) {
-        this.recommendationsArrangingBaby = recommendationsArrangingBaby;
-    }
-
-    public String getRecommendationsArrangingAdult() {
-        return recommendationsArrangingAdult;
-    }
-
-    public void setRecommendationsArrangingAdult(String recommendationsArrangingAdult) {
-        this.recommendationsArrangingAdult = recommendationsArrangingAdult;
-    }
-
-    public String getRecommendationsArrangingWithFeatures() {
-        return recommendationsArrangingWithFeatures;
-    }
-
-    public void setRecommendationsArrangingWithFeatures(String recommendationsArrangingWithFeatures) {
-        this.recommendationsArrangingWithFeatures = recommendationsArrangingWithFeatures;
     }
 }

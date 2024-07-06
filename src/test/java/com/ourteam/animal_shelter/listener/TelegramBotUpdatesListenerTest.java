@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class TelegramBotUpdatesListenerTest {
 
-    private TelegramBotUpdatesListener listener;
+    private TelegramBotUpdatesListener listener ;
 
     @Mock
     private TelegramLongPollingBot telegramBot;

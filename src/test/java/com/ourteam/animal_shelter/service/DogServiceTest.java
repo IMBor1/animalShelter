@@ -69,7 +69,7 @@ public class DogServiceTest {
 
     @Test
     public void testGetAllDogs() {
-        List<Dog> dogs = Arrays.asList(new Dog("Барбос", 5, true,true),
+        List<Dog> dogs = Arrays.asList (new Dog("Барбос", 5, true,true),
                 new Dog("Каштанка", 3, true,true));
         when(dogService.findAll()).thenReturn(dogs);
         List<Dog> foundDogs = dogService.findAll();

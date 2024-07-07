@@ -7,14 +7,16 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-
 public class TimerService {
+    @Value("${chat.id.volunteer}")
+    private Long chatIdVolunteer;
     private final TelegramBot telegramBot;
     private final ClientRepository clientRepository;
 
@@ -44,7 +46,8 @@ public class TimerService {
     public void reminder2Days() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
                 task -> {
-                    SendResponse execute = telegramBot.execute(new SendMessage(task., (task.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
+                    SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                            (task.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
                     if (execute.isOk()) {
                         clientRepository.delete(task);
                     } else {

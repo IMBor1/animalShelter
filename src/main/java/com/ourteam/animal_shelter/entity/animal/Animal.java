@@ -1,11 +1,14 @@
 package com.ourteam.animal_shelter.entity.animal;
 
 import com.ourteam.animal_shelter.entity.NamedEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
 public class Animal extends NamedEntity {
+    @Column(name = "AGE")
     private Integer age;
+    @Column(name = "IS_HEALTHY")
     private Boolean isHealthy;
 
 

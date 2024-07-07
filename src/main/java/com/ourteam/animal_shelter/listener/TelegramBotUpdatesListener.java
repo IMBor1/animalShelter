@@ -2,13 +2,18 @@ package com.ourteam.animal_shelter.listener;
 
 import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.exception.UploadFileException;
 import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.File;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,12 +63,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
+            reportPhotoService.uploadReportFromUser(update);
             if (update.message() != null) {
-//                long photoSizeCount = Arrays.stream(update.message().photo()).count();
-//                long photoIndex = photoSizeCount > 1 ? photoSizeCount - 1 : 0;
-//                byte[] file = Arrays.stream(update.message().photo()).toList().get((int) photoIndex).fileId().getBytes();
-//                reportPhotoService.saveReport(file,update.message().caption());
-
                 try {
                     logger.info("Processing update: {}", update);
                     buttons.ButtonsStage_0(update);

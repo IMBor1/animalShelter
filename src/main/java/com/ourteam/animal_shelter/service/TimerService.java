@@ -44,7 +44,7 @@ public class TimerService {
     public void reminder2Days() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
                 task -> {
-                    SendResponse execute = telegramBot.execute(new SendMessage(task.getChatId(), (task.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
+                    SendResponse execute = telegramBot.execute(new SendMessage(task., (task.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
                     if (execute.isOk()) {
                         clientRepository.delete(task);
                     } else {

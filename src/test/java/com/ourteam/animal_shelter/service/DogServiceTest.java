@@ -22,7 +22,7 @@ public class DogServiceTest {
 
 
     @Mock
-    private DogService dogService;
+    private DogService dogService ;
     @Mock
     private DogRepository dogRepository;
 

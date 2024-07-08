@@ -28,7 +28,7 @@ public class DogServiceTest {
 
     @Test
     public void testAddDog() {
-        Dog dog = new Dog("Барбос", 5, true,true);
+        Dog dog = new Dog("Барбос", 5, true);
         when(dogService.save(dog)).thenReturn(true);
         Boolean t = dogService.save(dog);
         assertEquals(true, t);
@@ -37,7 +37,7 @@ public class DogServiceTest {
 
     @Test
     public void testGetDogById() {
-        Dog dog = new Dog("Барбос", 5, true,true);
+        Dog dog = new Dog("Барбос", 5, true);
         when(dogService.findById(1)).thenReturn(Optional.of(dog));
         Optional<Dog> foundDog = dogService.findById(1);
         // Проверяем, что найденная собака соответствует ожидаемой
@@ -47,7 +47,7 @@ public class DogServiceTest {
 
     @Test
     public void testUpdateDog() {
-        Dog dog = new Dog("Барбос", 5, true,true);
+        Dog dog = new Dog("Барбос", 5, true);
         when(dogService.updateById(1, "Барбос", 5, true)).thenReturn(1);
         Integer updated = dogService.updateById(1, "Барбос", 5, true);
         // Проверяем, что собака была обновлена
@@ -69,8 +69,8 @@ public class DogServiceTest {
 
     @Test
     public void testGetAllDogs() {
-        List<Dog> dogs = Arrays.asList (new Dog("Барбос", 5, true,true),
-                new Dog("Каштанка", 3, true,true));
+        List<Dog> dogs = Arrays.asList(new Dog("Барбос", 5, true),
+                new Dog("Каштанка", 3, true));
         when(dogService.findAll()).thenReturn(dogs);
         List<Dog> foundDogs = dogService.findAll();
         // Проверяем, что список собак соответствует ожидаемому

@@ -1,15 +1,23 @@
 package com.ourteam.animal_shelter.service;
 
+import com.ourteam.animal_shelter.exception.UploadFileException;
 import com.ourteam.animal_shelter.model.Report;
 import com.ourteam.animal_shelter.model.ReportPhoto;
 import com.ourteam.animal_shelter.repository.ReportPhotoRepository;
 import com.ourteam.animal_shelter.repository.ReportRepository;
 import com.pengrad.telegrambot.request.SendPhoto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -24,7 +32,12 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class ReportPhotoService {
     @Value("${path.to.report-photo.folder}")
     private String reportPhotoDir;
-
+    @Value("${service.file-info.uri}")
+    private String fileInfoUri;
+    @Value("${service.file_storege.uri}")
+    private String fileStorageUri;
+    @Value("${telegram.bot.token}")
+    private String token;
     private final ReportPhotoRepository reportPhotoRepository;
     private final ReportRepository reportRepository;
 
@@ -91,7 +104,7 @@ public class ReportPhotoService {
      * @return - возвращает экземпляр класса {@link Report}
      */
     public Report getAddressPhoto() {
-        return reportRepository.findById(1L).get();
+        return reportRepository.findById(3L).get();
     }
 
     /**
@@ -99,8 +112,63 @@ public class ReportPhotoService {
      * @return - возвращает экземпляр класса {@link Report}
      */
     public Report getReportForm() {
-        return reportRepository.findById(2L).get();
+        return reportRepository.findById(4L).get();
     }
 
+    /**
+     * Получает путь к файлу
+     * @param fileId айди файла
+     * @return строка пути к файлу
+     */
+    public ResponseEntity<String> getFilePath(String fileId) {
+        var restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        var request = new HttpEntity<>(headers);
 
+
+        return restTemplate.exchange(
+                fileInfoUri,
+                HttpMethod.GET,
+                request,
+                String.class,
+                token, fileId
+        );
+    }
+
+    /**
+     * Возвращает массив байтов файла
+     * @param filePath строка пути к файлу
+     * @return массив байт
+     */
+    public byte[] downloadFile(String filePath) {
+        var fullUri = fileStorageUri.replace("{token}", token)
+                .replace("{filePath}", filePath);
+        URL urlObj = null;
+        try {
+            urlObj = new URL(fullUri);
+        } catch (MalformedURLException e) {
+            throw new UploadFileException(e);
+        }
+
+        try (InputStream is = urlObj.openStream()) {
+            return is.readAllBytes();
+        } catch (IOException e) {
+            throw new UploadFileException(urlObj.toExternalForm(), e);
+        }
+    }
+
+    /**
+     * Сохраняет ежедневный отчет с фото в БД
+     * @param file массив байт файла
+     * @param caption текст отчета
+     */
+    public void saveReport(byte[] file, String caption) {
+        ReportPhoto reportPhoto = new ReportPhoto();
+        reportPhoto.setData(file);
+        reportPhotoRepository.save(reportPhoto);
+        Report report = new Report();
+        report.setCaption(caption);
+        report.setAnimalPhoto(reportPhoto);
+        reportRepository.save(report);
+    }
 }

@@ -17,7 +17,7 @@ public class ValidationTest {
 
 
     @Mock
-    private static Pattern pattern ;
+    private static Pattern pattern;
     @Mock
     private static Matcher matcher;
 

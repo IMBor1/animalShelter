@@ -19,6 +19,7 @@ import java.io.File;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,9 +46,9 @@ public class ReportPhotoControllerWithMockTest {
                 multipartFile.getInputStream());
 
         // Выполняем POST-запрос к эндпоинту `/save-report-photo` с фиктивным объектом `MockMultipartFile`
-        mockMvc.perform(multipart("/save-report-photo")
+        mockMvc.perform(multipart("/{reportId}/save-report-photo", 1L)
                         .file(mockMultipartFile)
-                        .param("reportId", "1"))
+                        .param("reportId","1"))
                 .andExpect(status().isOk());
 
         // Проверяем, что метод `uploadReportPhoto()` из `reportPhotoService` был вызван

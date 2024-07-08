@@ -179,7 +179,7 @@ public class DogControllerWithMockTest {
             assertEquals(exp.get(i).getName(), act.get(i).getName());
         }
     }
-}*/
+}
 
 import com.ourteam.animal_shelter.repository.DogRepository;
 import net.minidev.json.JSONObject;
@@ -242,7 +242,7 @@ public class DogControllerWithMockTest {
         dog.setId(1);
         dog.setName("Buddy");
         dog.setAge(3);
-        dog.setHealthy(true);*/
+        dog.setHealthy(true);
     @Test
     public void saveDogTest() throws Exception {
         Integer id = 1;
@@ -394,4 +394,139 @@ public class DogControllerWithMockTest {
 
         verify(dogService).deleteById(1);
     }*/
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import com.ourteam.animal_shelter.entity.animal.Dog;
+import com.ourteam.animal_shelter.service.DogService;
+import com.ourteam.animal_shelter.controller.DogController;
+
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class DogControllerWithMockTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Mock
+    private DogService dogService;
+
+    @InjectMocks
+    private DogController dogController;
+
+    private Dog dog1;
+    private Dog dog2;
+
+    @BeforeEach
+    public void setUp() {
+        dog1 = new Dog("Dog1", 1, true);
+        dog2 = new Dog("Dog2", 2, false);
+    }
+
+    @Test
+    public void shouldReturn200WhenSaveDog() throws Exception {
+        // given
+        when(dogService.save(dog1)).thenReturn(true);
+        String json = new ObjectMapper().writeValueAsString(dog1);
+
+        // when & then
+        mockMvc.perform(post("/dog/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturn200WhenFindDogById() throws Exception {
+        // given
+        when(dogService.findById(1)).thenReturn(Optional.of(dog1));
+        // when & then
+        mockMvc.perform(get("/dog/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new ObjectMapper().writeValueAsString(dog1)));
+    }
+
+    @Test
+    public void shouldReturn404WhenDogWithIdNotFound() throws Exception {
+        // given
+        when(dogService.findById(3)).thenReturn(Optional.empty());
+        // when & then
+        mockMvc.perform(get("/dog/3"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturn200WhenFindAllDogs() throws Exception {
+        // given
+        List<Dog> dogs = Arrays.asList(dog1, dog2);
+        when(dogService.findAll()).thenReturn(dogs);
+        // when & then
+        mockMvc.perform(get("/dog/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new ObjectMapper().writeValueAsString(dogs)));
+    }
+
+    @Test
+    public void shouldReturn404WhenNoDogsFound() throws Exception {
+        // given
+        when(dogService.findAll()).thenReturn(List.of());
+        // when & then
+        mockMvc.perform(get("/dog/"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturn200WhenUpdateDogById() throws Exception {
+        // given
+        when(dogService.updateById(1, "Dog1", 1, true)).thenReturn(1);
+        mockMvc.perform(put("/dog/1?name=Dog1&age=1&isHealthy=true"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturn400WhenUpdateDogByIdWithBadRequest() throws Exception {
+        // given
+        when(dogService.updateById(1, null, null, null)).thenReturn(0);
+        mockMvc.perform(put("/dog/1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturn200WhenDeleteDogById() throws Exception {
+        // given
+        when(dogService.deleteById(1)).thenReturn(true);
+        mockMvc.perform(delete("/dog/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturn404WhenDeleteDogByIdWithBadRequest() throws Exception {
+        // given
+        when(dogService.deleteById(3)).thenReturn(false);
+        mockMvc.perform(delete("/dog/3"))
+                .andExpect(status().isNotFound());
+    }
 }
+
+

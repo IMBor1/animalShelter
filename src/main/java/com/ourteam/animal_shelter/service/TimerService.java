@@ -42,12 +42,28 @@ public class TimerService {
         );
     }
 
-    @Scheduled(fixedDelay = 8640)
+    @Scheduled(fixedDelay = 8640000)
     public void reminder2Days() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
                 task -> {
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                             (task.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
+                    if (execute.isOk()) {
+                        clientRepository.delete(task);
+                    } else {
+                        logger.error("Failed to send task" + task);
+                    }
+                }
+
+        );
+    }
+
+    @Scheduled(fixedDelay = 8640000)
+    public void reminder30Day() {
+        clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(30)).forEach(
+                task -> {
+                    SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                            (task.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
                     if (execute.isOk()) {
                         clientRepository.delete(task);
                     } else {

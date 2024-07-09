@@ -288,4 +288,8 @@ public class Constants {
      * Сообщение волонтеру, что испытательный срок 30 дней прошел.
      */
     public static String PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED = "Испытательный срок 30 дней прошел";
+    /**
+     * Сообщение волонтеру, что испытательный срок 14 дней прошел.
+     */
+    public static String PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED = "Испытательный срок 14 дней прошел";
 }

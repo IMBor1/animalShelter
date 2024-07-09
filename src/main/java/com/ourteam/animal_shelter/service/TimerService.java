@@ -73,4 +73,20 @@ public class TimerService {
 
         );
     }
+
+    @Scheduled(fixedDelay = 8640000)
+    public void reminder14Day() {
+        clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(14)).forEach(
+                task -> {
+                    SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                            (task.getChatId() + Constants.PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED)));
+                    if (execute.isOk()) {
+                        clientRepository.delete(task);
+                    } else {
+                        logger.error("Failed to send task" + task);
+                    }
+                }
+
+        );
+    }
 }

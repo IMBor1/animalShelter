@@ -271,4 +271,5 @@ public class Constants {
     public static String CONGRATULATIONS = "Поздравляем! Свяжитесь, пожалуйста с нашим питомником по телефону 235-13-42";
     public static String REMINDER = "Здравствуйте! Сегодня от вас не пришло отчета, просьба прислать отчет. Напоминаю о необходимости присылать отчет ежедневно.";
     public static String REMINDER_TO_VOLUNTEER = " пользователь не присылал отчет уже 2 дня.";
+    public static String MESSAGE_TO_CLIENT = " у этого пользователя возникли вопросы. Пожалуйста, свяжитесь с ним.";
 }

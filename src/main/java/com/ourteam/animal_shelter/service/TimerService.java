@@ -42,7 +42,7 @@ public class TimerService {
         );
     }
 
-    @Scheduled(fixedDelay = 8640000)
+    @Scheduled(fixedDelay = 8640)
     public void reminder2Days() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
                 task -> {

@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Класс с методами, которые делают запрос к базе данных при помощи аннотации @Scheduled.
+ */
 @Service
 public class TimerService {
     @Value("${chat.id.volunteer}")
@@ -27,6 +30,9 @@ public class TimerService {
 
     Logger logger = LoggerFactory.getLogger(TimerService.class);
 
+    /**
+     * метод делает запрос к базе данных раз в сутки и отправляет сообщение пользователю.
+     */
     @Scheduled(fixedDelay = 8640000)
     public void reminder1Day() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(1)).forEach(
@@ -42,6 +48,9 @@ public class TimerService {
         );
     }
 
+    /**
+     * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
+     */
     @Scheduled(fixedDelay = 8640000)
     public void reminder2Days() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
@@ -58,6 +67,9 @@ public class TimerService {
         );
     }
 
+    /**
+     * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
+     */
     @Scheduled(fixedDelay = 8640000)
     public void reminder30Day() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(30)).forEach(
@@ -74,6 +86,9 @@ public class TimerService {
         );
     }
 
+    /**
+     * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
+     */
     @Scheduled(fixedDelay = 8640000)
     public void reminder14Day() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(14)).forEach(

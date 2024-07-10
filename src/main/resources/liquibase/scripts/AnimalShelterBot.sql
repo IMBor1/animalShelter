@@ -7,4 +7,6 @@ chat_Id Integer primary key,
 name Text,
 has_pet Boolean,
 phone Text,
-timer timeStamp);
+timer timeStamp,
+probationary_period timeStamp);
+

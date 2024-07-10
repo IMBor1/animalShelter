@@ -24,6 +24,8 @@ public class Client {
     private String phone;
     @Column(name = "timer")
     private LocalDateTime timer;
+    @Column(name = "probationary_period")
+    private LocalDateTime probationaryPeriod;
 
     public Client() {
 
@@ -90,17 +92,25 @@ public class Client {
         this.timer = timer;
     }
 
+    public LocalDateTime getProbationaryPeriod() {
+        return probationaryPeriod;
+    }
+
+    public void setProbationaryPeriod(LocalDateTime probationaryPeriod) {
+        this.probationaryPeriod = probationaryPeriod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && Objects.equals(name, client.name) && Objects.equals(phone, client.phone) && Objects.equals(timer, client.timer);
+        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && probationaryPeriod == client.probationaryPeriod && Objects.equals(name, client.name) && Objects.equals(phone, client.phone) && Objects.equals(timer, client.timer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, hasPet, phone, timer);
+        return Objects.hash(id, chatId, name, hasPet, phone, timer, probationaryPeriod);
     }
 
     @Override
@@ -112,6 +122,7 @@ public class Client {
                 ", hasPet=" + hasPet +
                 ", phone='" + phone + '\'' +
                 ", timer=" + timer +
+                ", probationaryPeriod=" + probationaryPeriod +
                 '}';
     }
 }

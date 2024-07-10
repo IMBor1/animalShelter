@@ -72,7 +72,7 @@ public class TimerService {
      */
     @Scheduled(fixedDelay = 8640000)
     public void reminder30Day() {
-        clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(30)).forEach(
+        clientRepository.findAllByProbationaryPeriodLessThan(LocalDateTime.now().minusDays(30)).forEach(
                 task -> {
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                             (task.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
@@ -91,7 +91,7 @@ public class TimerService {
      */
     @Scheduled(fixedDelay = 8640000)
     public void reminder14Day() {
-        clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(14)).forEach(
+        clientRepository.findAllByProbationaryPeriodLessThan(LocalDateTime.now().minusDays(14)).forEach(
                 task -> {
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                             (task.getChatId() + Constants.PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED)));

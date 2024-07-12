@@ -1,6 +1,7 @@
 package com.ourteam.animal_shelter.service;
 
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -108,4 +109,11 @@ public class TimerService {
 
         );
     }
+
+    public Client findByChatId(long id_chat, int probationaryPeriod) {
+        Client client = clientRepository.findByChatId(id_chat);
+        client.setProbationaryPeriod(probationaryPeriod);
+        return clientRepository.save(client);
+    }
+
 }

@@ -8,5 +8,5 @@ name Text,
 has_pet Boolean,
 phone Text,
 timer timeStamp,
-probationary_period timeStamp);
+probationary_period Integer);
 

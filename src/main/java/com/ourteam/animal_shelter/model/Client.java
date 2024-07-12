@@ -25,7 +25,7 @@ public class Client {
     @Column(name = "timer")
     private LocalDateTime timer;
     @Column(name = "probationary_period")
-    private LocalDateTime probationaryPeriod;
+    private int probationaryPeriod;
 
     public Client() {
 
@@ -92,11 +92,11 @@ public class Client {
         this.timer = timer;
     }
 
-    public LocalDateTime getProbationaryPeriod() {
+    public int getProbationaryPeriod() {
         return probationaryPeriod;
     }
 
-    public void setProbationaryPeriod(LocalDateTime probationaryPeriod) {
+    public void setProbationaryPeriod(int probationaryPeriod) {
         this.probationaryPeriod = probationaryPeriod;
     }
 

@@ -11,5 +11,5 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
    public List<Client> findAllByTimerLessThan(LocalDateTime time);
 
-   public List<Client> findAllByProbationaryPeriodLessThan(LocalDateTime probationaryPeriod);
+   public List<Client> findAllByProbationaryPeriodLessThan(int probationaryPeriod);
 }

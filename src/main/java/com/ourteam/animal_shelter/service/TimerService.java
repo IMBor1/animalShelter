@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 public class TimerService {
     @Value("${chat.id.volunteer}")
     private Long chatIdVolunteer;
+    int countBy30 = 0;
+    int countBy14 = 0;
     private final TelegramBot telegramBot;
     private final ClientRepository clientRepository;
 
@@ -36,12 +38,12 @@ public class TimerService {
     @Scheduled(fixedDelay = 8640000)
     public void reminder1Day() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(1)).forEach(
-                task -> {
-                    SendResponse execute = telegramBot.execute(new SendMessage(task.getChatId(), Constants.REMINDER));
+                client -> {
+                    SendResponse execute = telegramBot.execute(new SendMessage(client.getChatId(), Constants.REMINDER));
                     if (execute.isOk()) {
-                        clientRepository.delete(task);
+                        clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + task);
+                        logger.error("Failed to send task" + client);
                     }
                 }
 
@@ -54,13 +56,13 @@ public class TimerService {
     @Scheduled(fixedDelay = 8640000)
     public void reminder2Days() {
         clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
-                task -> {
+                client -> {
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                            (task.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
+                            (client.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
                     if (execute.isOk()) {
-                        clientRepository.delete(task);
+                        clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + task);
+                        logger.error("Failed to send task" + client);
                     }
                 }
 
@@ -72,14 +74,15 @@ public class TimerService {
      */
     @Scheduled(fixedDelay = 8640000)
     public void reminder30Day() {
-        clientRepository.findAllByProbationaryPeriodLessThan(LocalDateTime.now().minusDays(30)).forEach(
-                task -> {
+        clientRepository.findAllByProbationaryPeriodLessThan(countBy30).forEach(
+                client -> {
+                    countBy30 = +1;
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                            (task.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
+                            (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
                     if (execute.isOk()) {
-                        clientRepository.delete(task);
+                        clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + task);
+                        logger.error("Failed to send task" + client);
                     }
                 }
 
@@ -91,14 +94,15 @@ public class TimerService {
      */
     @Scheduled(fixedDelay = 8640000)
     public void reminder14Day() {
-        clientRepository.findAllByProbationaryPeriodLessThan(LocalDateTime.now().minusDays(14)).forEach(
-                task -> {
+        clientRepository.findAllByProbationaryPeriodLessThan(countBy14).forEach(
+                client -> {
+                    countBy14 = +1;
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                            (task.getChatId() + Constants.PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED)));
+                            (client.getChatId() + Constants.PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED)));
                     if (execute.isOk()) {
-                        clientRepository.delete(task);
+                        clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + task);
+                        logger.error("Failed to send task" + client);
                     }
                 }
 

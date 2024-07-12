@@ -110,7 +110,7 @@ public class TimerService {
         );
     }
 
-    public Client findByChatId(long id_chat, int probationaryPeriod) {
+    public Client findByChat_Id(long id_chat, int probationaryPeriod) {
         Client client = clientRepository.findByChatId(id_chat);
         client.setProbationaryPeriod(probationaryPeriod);
         return clientRepository.save(client);

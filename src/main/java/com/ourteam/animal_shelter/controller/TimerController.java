@@ -22,7 +22,7 @@ public class TimerController {
     @GetMapping("timer/{idChat}")
     public ResponseEntity findByChatId(@PathVariable Long idChat,
                                        @RequestParam Integer probationaryPeriod) {
-        Client client = timerService.findByChatId(idChat, probationaryPeriod);
+        Client client = timerService.findByChat_Id(idChat, probationaryPeriod);
         if (client == null) {
             return ResponseEntity.notFound().build();
         }

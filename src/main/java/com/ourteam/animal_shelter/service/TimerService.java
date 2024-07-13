@@ -77,7 +77,7 @@ public class TimerService {
     public void reminder30Day() {
         clientRepository.findAllByProbationaryPeriodLessThan(countBy30).forEach(
                 client -> {
-                    countBy30 = +1;
+                    countBy30 += 1;
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                             (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
                     if (execute.isOk()) {
@@ -97,7 +97,7 @@ public class TimerService {
     public void reminder14Day() {
         clientRepository.findAllByProbationaryPeriodLessThan(countBy14).forEach(
                 client -> {
-                    countBy14 = +1;
+                    countBy14 += 1;
                     SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                             (client.getChatId() + Constants.PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED)));
                     if (execute.isOk()) {

@@ -1,8 +1,9 @@
 package com.ourteam.animal_shelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -19,7 +20,9 @@ public class Client {
     private String name;
     @Column(name = "has_pet")
     private boolean hasPet;
-
+    @OneToMany
+    @JsonIgnore
+    private List<Report> report;
     @Column(name = "phone")
     private String phone;
     @Column(name = "timer")
@@ -43,6 +46,8 @@ public class Client {
         this.hasPet = hasPet;
         this.timer = timer;
     }
+
+    public Client() {}
 
     public long getId() {
         return id;
@@ -124,5 +129,13 @@ public class Client {
                 ", timer=" + timer +
                 ", probationaryPeriod=" + probationaryPeriod +
                 '}';
+    }
+
+    public List<Report> getReport() {
+        return report;
+    }
+
+    public void setReport(List<Report> report) {
+        this.report = report;
     }
 }

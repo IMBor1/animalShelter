@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ReportPhotoRepository extends JpaRepository<ReportPhoto, Long> {
-//    Optional<ReportPhoto> findByReportId(Long reportId);
+    Optional<ReportPhoto> findReportPhotoByReportId(Long reportId);
 }

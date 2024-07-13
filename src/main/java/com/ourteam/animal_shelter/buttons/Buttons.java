@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Buttons {
     private final TelegramBot telegramBot;
+
     @Value("${chat.id.volunteer}")
     private Long chatIdVolunteer;
     public Buttons(TelegramBot telegramBot) {

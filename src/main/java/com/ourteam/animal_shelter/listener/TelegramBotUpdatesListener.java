@@ -2,27 +2,18 @@ package com.ourteam.animal_shelter.listener;
 
 import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
-import com.ourteam.animal_shelter.exception.UploadFileException;
 import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.File;
-import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.GetFileResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -36,13 +27,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
-    private ReportPhotoService reportPhotoService;
+    private final ReportPhotoService reportPhotoService;
     private final ClientRepository clientRepository;
     private final TelegramBot telegramBot;
     private final Buttons buttons;
 
-    public TelegramBotUpdatesListener(ClientRepository clientRepository, TelegramBot telegramBot, Buttons buttons) {
+    public TelegramBotUpdatesListener(ReportPhotoService reportPhotoService,
+                                      ClientRepository clientRepository,
+                                      TelegramBot telegramBot,
+                                      Buttons buttons) {
+        this.reportPhotoService = reportPhotoService;
         this.clientRepository = clientRepository;
         this.telegramBot = telegramBot;
         this.buttons = buttons;
@@ -63,14 +57,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
-            reportPhotoService.uploadReportFromUser(update);
             if (update.message() != null) {
-                try {
-                    logger.info("Processing update: {}", update);
-                    buttons.ButtonsStage_0(update);
-                    buttons.buttonsStage_volunteer(update);
-                } catch (Exception e) {
-                    logger.error("update not correct");
+                if (update.message().photo() != null || update.message().document() != null) {
+                    reportPhotoService.uploadReportFromUser(update);
+                } else {
+                    try {
+                        logger.info("Processing update: {}", update);
+                        buttons.ButtonsStage_0(update);
+                        buttons.buttonsStage_volunteer(update);
+                    } catch (Exception e) {
+                        logger.error("update not correct");
+                    }
                 }
             } else if (update.callbackQuery() != null) {
                 try {

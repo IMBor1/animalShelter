@@ -19,15 +19,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
  * Сервис для работы с фотографиями к ежедневному отчету
- *
- *
  */
 @Service
 public class ReportPhotoService {
@@ -65,9 +62,6 @@ public class ReportPhotoService {
         }
         ReportPhoto reportPhoto = new ReportPhoto();
         reportPhoto.setReport(report);
-        reportPhoto.setFilePath(filePath.toString());
-        reportPhoto.setFileSize(file.getSize());
-        reportPhoto.setMediaType(file.getContentType());
         reportPhoto.setData(file.getBytes());
         report.setAnimalPhoto(reportPhoto);
         reportPhotoRepository.save(reportPhoto);
@@ -118,14 +112,20 @@ public class ReportPhotoService {
      * @param file массив байт файла
      * @param caption текст отчета
      */
-    public void saveReport(byte[] file, String caption) {
-        ReportPhoto reportPhoto = new ReportPhoto();
-        reportPhoto.setData(file);
-        reportPhotoRepository.save(reportPhoto);
-        Report report = new Report();
-        report.setCaption(caption);
-        report.setAnimalPhoto(reportPhoto);
-        reportRepository.save(report);
+    private void saveReport(byte[] file, String caption) {
+        try {
+            ReportPhoto reportPhoto = new ReportPhoto();
+            Report report = new Report();
+            reportPhoto.setData(file);
+            reportPhotoRepository.save(reportPhoto);
+            report.setCaption(caption);
+            report.setAnimalPhoto(reportPhoto);
+            reportRepository.save(report);
+            reportPhoto.setReport(report);
+            reportPhotoRepository.save(reportPhoto);
+        } catch (RuntimeException e) {
+            System.out.println("Происходит хуйня");
+        }
     }
 
     /**
@@ -166,16 +166,16 @@ public class ReportPhotoService {
      * Возращает весь список отчетов
      * @return лист отчетов, объектов класса {@link Report}
      */
-    public Collection<Report> getAllReports() {
+    public List<Report> getAllReports() {
         return reportRepository.findAll();
     }
 
     /**
      * Возращает фотографию отчета по айди отчета
-     * @param reportId айди отчета
+     * @param id айди отчета
      * @return объект класса {@link ReportPhoto}
      */
-//    public ReportPhoto getReportPhoto(Long reportId) {
-//        return reportPhotoRepository.findByReportId(reportId).orElseThrow();
-//    }
+    public ReportPhoto getReportPhoto(Long id) {
+        return reportPhotoRepository.findReportPhotoByReportId(id).orElseThrow();
+    }
 }

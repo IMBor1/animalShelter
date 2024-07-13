@@ -23,7 +23,9 @@ public class Client {
     @Column(name = "phone")
     private String phone;
     @Column(name = "timer")
-    private LocalDateTime localDateTime;
+    private LocalDateTime timer;
+    @Column(name = "probationary_period")
+    private int probationaryPeriod;
 
     public Client() {
 
@@ -35,11 +37,11 @@ public class Client {
 
     }
 
-    public Client(long chatId, String name, boolean hasPet, LocalDateTime localDateTime) {
+    public Client(long chatId, String name, boolean hasPet, LocalDateTime timer) {
         this.chatId = chatId;
         this.name = name;
         this.hasPet = hasPet;
-        this.localDateTime = localDateTime;
+        this.timer = timer;
     }
 
     public long getId() {
@@ -82,12 +84,20 @@ public class Client {
         this.phone = phone;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getTimer() {
+        return timer;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setTimer(LocalDateTime timer) {
+        this.timer = timer;
+    }
+
+    public int getProbationaryPeriod() {
+        return probationaryPeriod;
+    }
+
+    public void setProbationaryPeriod(int probationaryPeriod) {
+        this.probationaryPeriod = probationaryPeriod;
     }
 
     @Override
@@ -95,12 +105,12 @@ public class Client {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && Objects.equals(name, client.name) && Objects.equals(phone, client.phone) && Objects.equals(localDateTime, client.localDateTime);
+        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && probationaryPeriod == client.probationaryPeriod && Objects.equals(name, client.name) && Objects.equals(phone, client.phone) && Objects.equals(timer, client.timer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, hasPet, phone, localDateTime);
+        return Objects.hash(id, chatId, name, hasPet, phone, timer, probationaryPeriod);
     }
 
     @Override
@@ -111,7 +121,8 @@ public class Client {
                 ", name='" + name + '\'' +
                 ", hasPet=" + hasPet +
                 ", phone='" + phone + '\'' +
-                ", localDateTime=" + localDateTime +
+                ", timer=" + timer +
+                ", probationaryPeriod=" + probationaryPeriod +
                 '}';
     }
 }

@@ -12,6 +12,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,8 @@ import java.util.List;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
-
+    @Value("${chat.id.volunteer}")
+    private Long chatIdVolunteer;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     @Autowired
@@ -74,6 +76,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         buttons.buttonsStage_2(update);
                     } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
                         telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
+                        telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
                     }
                     text = update.callbackQuery().data();
                     if (text.equalsIgnoreCase("/a1")) {
@@ -93,6 +96,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                     } else if (text.equalsIgnoreCase("/a6")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                        telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
+
 //                    }  else if (text.equalsIgnoreCase("/b1")) {
 //                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_FOR_MEETING_ANIMALS));
                     } else if (text.equalsIgnoreCase("/b2")) {
@@ -117,11 +122,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
                                 update.callbackQuery().message().chat().username()));
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
-                        if (update.message().contact().phoneNumber() != null) {
-                            clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
-                        }
                     } else if (text.equalsIgnoreCase("/b12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                        telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
                     } else if (text.equalsIgnoreCase("/b13")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
                         Client client = clientRepository.findByChatId(chat_Id);
@@ -140,4 +143,5 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
+
 }

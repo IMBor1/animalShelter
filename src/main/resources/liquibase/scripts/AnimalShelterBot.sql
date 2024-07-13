@@ -7,7 +7,9 @@ chat_Id Integer primary key,
 name Text,
 has_pet Boolean,
 phone Text,
-timer timeStamp);
+timer timeStamp,
+probationary_period Integer);
+
 
 --changeset anton22582258:create_shelter
 create table shelter

@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.ourteam.animal_shelter.constants.Constants.SHEDULE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
@@ -40,12 +41,15 @@ public class ReportPhotoService {
     private final ClientRepository clientRepository;
 
     public ReportPhotoService(ReportPhotoRepository reportPhotoRepository,
-                              ReportRepository reportRepository, TelegramBot telegramBot, ClientRepository clientRepository) {
+                              ReportRepository reportRepository,
+                              TelegramBot telegramBot,
+                              ClientRepository clientRepository) {
         this.reportPhotoRepository = reportPhotoRepository;
         this.reportRepository = reportRepository;
         this.telegramBot = telegramBot;
         this.clientRepository = clientRepository;
     }
+
 
     /**
      * Метод для загрузки фото в базу данных и на жесткий диск

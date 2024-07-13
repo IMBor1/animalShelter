@@ -20,9 +20,6 @@ public class Client {
     private String name;
     @Column(name = "has_pet")
     private boolean hasPet;
-    @OneToMany
-    @JsonIgnore
-    private List<Report> report;
     @Column(name = "phone")
     private String phone;
     @Column(name = "timer")
@@ -46,8 +43,6 @@ public class Client {
         this.hasPet = hasPet;
         this.timer = timer;
     }
-
-    public Client() {}
 
     public long getId() {
         return id;
@@ -130,12 +125,12 @@ public class Client {
                 ", probationaryPeriod=" + probationaryPeriod +
                 '}';
     }
-
-    public List<Report> getReport() {
-        return report;
-    }
-
-    public void setReport(List<Report> report) {
-        this.report = report;
-    }
+//
+//    public List<Report> getReport() {
+//        return report;
+//    }
+//
+//    public void setReport(List<Report> report) {
+//        this.report = report;
+//    }
 }

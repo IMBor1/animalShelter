@@ -13,7 +13,6 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,14 +30,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private Long chatIdVolunteer;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
-    private ReportPhotoService reportPhotoService;
-
+    private final ReportPhotoService reportPhotoService;
     private final ClientRepository clientRepository;
     private final TelegramBot telegramBot;
     private final Buttons buttons;
 
-    public TelegramBotUpdatesListener(ClientRepository clientRepository, TelegramBot telegramBot, Buttons buttons) {
+    public TelegramBotUpdatesListener(ReportPhotoService reportPhotoService,
+                                      ClientRepository clientRepository,
+                                      TelegramBot telegramBot,
+                                      Buttons buttons) {
+        this.reportPhotoService = reportPhotoService;
         this.clientRepository = clientRepository;
         this.telegramBot = telegramBot;
         this.buttons = buttons;
@@ -60,11 +61,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             if (update.message() != null) {
-                try {
-                    logger.info("Processing update: {}", update);
-                    buttons.ButtonsStage_0(update);
-                } catch (Exception e) {
-                    logger.error("update not correct");
+                if (update.message().photo() != null || update.message().document() != null) {
+                    reportPhotoService.uploadReportFromUser(update);
+                } else {
+                    try {
+                        logger.info("Processing update: {}", update);
+                        buttons.ButtonsStage_0(update);
+                        buttons.buttonsStage_volunteer(update);
+                    } catch (Exception e) {
+                        logger.error("update not correct");
+                    }
                 }
             } else if (update.callbackQuery() != null) {
                 try {
@@ -130,7 +136,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         Client client = clientRepository.findByChatId(chat_Id);
                         if (client != null) {
                             client.setHasPet(true);
-                            client.setLocalDateTime(LocalDateTime.now());
+                            client.setTimer(LocalDateTime.now());
                             clientRepository.save(client);
                         } else {
                             clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true, LocalDateTime.now()));
@@ -143,5 +149,4 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
-
 }

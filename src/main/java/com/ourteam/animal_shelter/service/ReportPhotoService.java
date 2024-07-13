@@ -11,6 +11,7 @@ import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendPhoto;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
  * Сервис для работы с фотографиями к ежедневному отчету
  */
 @Service
+@Transactional
 public class ReportPhotoService {
     @Value("${path.to.report-photo.folder}")
     private String reportPhotoDir;

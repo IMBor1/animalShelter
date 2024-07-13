@@ -8,8 +8,8 @@ import java.util.Objects;
 /**
  * Сущность - ежедневные отчеты о животном
  * {@code animalPhoto} - фотография животного; <br>
- * {@code ration} - рацион животного; <br>
- * {@code healthAndChanges} - состояние и изменение поведения животного; <br>
+ * {@code caption} - описание ежедневного отчета
+ * {@code client} - клиет
  * Содержит стандартные методы геттеры и сеттеры. Конструктор по умолнчанию.
  */
 @Entity
@@ -20,8 +20,9 @@ public class Report {
     @OneToOne
     @JsonIgnore
     private ReportPhoto animalPhoto;
-
     private String caption;
+    @ManyToOne
+    private Client client;
 
     public Long getId() {
         return id;
@@ -67,5 +68,13 @@ public class Report {
                 "reportId=" + id +
                 ", caption='" + caption + '\'' +
                 '}';
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

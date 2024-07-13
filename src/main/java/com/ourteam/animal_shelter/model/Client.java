@@ -1,7 +1,9 @@
 package com.ourteam.animal_shelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,12 +23,17 @@ public class Client {
 
     @Column(name = "phone")
     private String phone;
+    @OneToMany
+    @JsonIgnore
+    private List<Report> report;
 
     public Client(long chatId, String name) {
         this.chatId = chatId;
         this.name = name;
 
     }
+
+    public Client() {}
 
     public long getId() {
         return id;
@@ -92,5 +99,13 @@ public class Client {
                 ", phone=" + phone +
                 '\'' +
                 '}';
+    }
+
+    public List<Report> getReport() {
+        return report;
+    }
+
+    public void setReport(List<Report> report) {
+        this.report = report;
     }
 }

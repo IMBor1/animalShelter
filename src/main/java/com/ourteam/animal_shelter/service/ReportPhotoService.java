@@ -1,8 +1,10 @@
 package com.ourteam.animal_shelter.service;
 
 import com.ourteam.animal_shelter.exception.UploadFileException;
+import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.model.Report;
 import com.ourteam.animal_shelter.model.ReportPhoto;
+import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.ourteam.animal_shelter.repository.ReportPhotoRepository;
 import com.ourteam.animal_shelter.repository.ReportRepository;
 import com.pengrad.telegrambot.TelegramBot;
@@ -35,12 +37,14 @@ public class ReportPhotoService {
     private final ReportPhotoRepository reportPhotoRepository;
     private final ReportRepository reportRepository;
     private final TelegramBot telegramBot;
+    private final ClientRepository clientRepository;
 
     public ReportPhotoService(ReportPhotoRepository reportPhotoRepository,
-                              ReportRepository reportRepository, TelegramBot telegramBot) {
+                              ReportRepository reportRepository, TelegramBot telegramBot, ClientRepository clientRepository) {
         this.reportPhotoRepository = reportPhotoRepository;
         this.reportRepository = reportRepository;
         this.telegramBot = telegramBot;
+        this.clientRepository = clientRepository;
     }
 
     /**
@@ -114,20 +118,18 @@ public class ReportPhotoService {
      * @param file массив байт файла
      * @param caption текст отчета
      */
-    private void saveReport(byte[] file, String caption) {
-        try {
+    private void saveReport(byte[] file, String caption, Long chatId) {
             ReportPhoto reportPhoto = new ReportPhoto();
             Report report = new Report();
+            Client client = clientRepository.findByChatId(chatId);
             reportPhoto.setData(file);
             reportPhotoRepository.save(reportPhoto);
             report.setCaption(caption);
             report.setAnimalPhoto(reportPhoto);
+            report.setClient(client);
             reportRepository.save(report);
             reportPhoto.setReport(report);
             reportPhotoRepository.save(reportPhoto);
-        } catch (RuntimeException e) {
-            System.out.println("Происходит хуйня");
-        }
     }
 
     /**
@@ -141,12 +143,12 @@ public class ReportPhotoService {
             String caption = update.message().caption();
             List<PhotoSize> list = Arrays.stream(photo).toList();
             String fileId = list.get(list.size() - 1).fileId();
-            saveReport(getBytesFromFilByFileId(fileId),caption);
+            saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
         }
         else if (document != null) {
             String caption = update.message().caption();
             String fileId = update.message().document().fileId();
-            saveReport(getBytesFromFilByFileId(fileId),caption);
+            saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
         }
     }
 
@@ -180,4 +182,5 @@ public class ReportPhotoService {
     public ReportPhoto getReportPhoto(Long id) {
         return reportPhotoRepository.findReportPhotoByReportId(id).orElseThrow();
     }
+
 }

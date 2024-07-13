@@ -44,7 +44,7 @@ public class TimerService {
                     if (execute.isOk()) {
                         clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + client);
+                        logger.error("Failed to send client" + client);
                     }
                 }
 
@@ -63,7 +63,7 @@ public class TimerService {
                     if (execute.isOk()) {
                         clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + client);
+                        logger.error("Failed to send client" + client);
                     }
                 }
 
@@ -83,7 +83,7 @@ public class TimerService {
                     if (execute.isOk()) {
                         clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + client);
+                        logger.error("Failed to send client" + client);
                     }
                 }
 
@@ -103,7 +103,7 @@ public class TimerService {
                     if (execute.isOk()) {
                         clientRepository.delete(client);
                     } else {
-                        logger.error("Failed to send task" + client);
+                        logger.error("Failed to send client" + client);
                     }
                 }
 

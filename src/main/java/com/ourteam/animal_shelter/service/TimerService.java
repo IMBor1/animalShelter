@@ -110,6 +110,14 @@ public class TimerService {
         );
     }
 
+    /**
+     * Метод,который позволяет установить испытательный срок.
+     * использует метод репозитория findByChatId
+     *
+     * @param id_chat            не может быть null
+     * @param probationaryPeriod
+     * @return
+     */
     public Client findByChat_Id(long id_chat, int probationaryPeriod) {
         Client client = clientRepository.findByChatId(id_chat);
         client.setProbationaryPeriod(probationaryPeriod);

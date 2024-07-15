@@ -93,8 +93,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                     } else if (text.equalsIgnoreCase("/a6")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+
 //                    }  else if (text.equalsIgnoreCase("/b1")) {
-//                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_FOR_MEETING_ANIMALS));
+ //                   telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id()));
                     } else if (text.equalsIgnoreCase("/b2")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.RULES_FOR_MEETING_ANIMALS));
                     } else if (text.equalsIgnoreCase("/b3")) {

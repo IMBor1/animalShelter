@@ -19,6 +19,9 @@ public class Photo {
     private Long fileSize;
     private String mediaType;
     private String path;
+    @OneToOne
+    @JoinColumn(name = "dog_id")
+    private Dog dog;
 
     public Photo(Long id, Long fileSize, String mediaType, String path) {
         this.id = id;

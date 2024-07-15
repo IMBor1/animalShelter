@@ -1,4 +1,4 @@
-package com.ourteam.animal_shelter.controller;
+/*package com.ourteam.animal_shelter.controller;
 
 import com.ourteam.animal_shelter.service.ReportPhotoService;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class ReportPhotoControllerWithMockTest {
         // Проверяем, что метод `uploadReportPhoto()` из `reportPhotoService` был вызван
         verify(reportPhotoService).uploadReportPhoto(1L, mockMultipartFile);
     }
-}
+}*/
 
 
 

@@ -89,12 +89,4 @@ public class PhotoService {
                 .findAll(PageRequest.of(pageNumber - 1, pageSize))
                 .getContent();
     }
-
-
-
-
-
-
-
-
 }

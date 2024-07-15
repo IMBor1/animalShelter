@@ -1,9 +1,11 @@
-/*package com.ourteam.animal_shelter.service;
+package com.ourteam.animal_shelter.service;
 
 import com.ourteam.animal_shelter.model.Report;
 import com.ourteam.animal_shelter.model.ReportPhoto;
+import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.ourteam.animal_shelter.repository.ReportPhotoRepository;
 import com.ourteam.animal_shelter.repository.ReportRepository;
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendPhoto;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 import com.ourteam.animal_shelter.service.ReportPhotoService;
 
+import static com.ourteam.animal_shelter.service.ReportPhotoService.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -33,17 +36,26 @@ public class ReportPhotoServiceTest {
 
         // Создаем фиктивный объект `Report`
         Report report = mock(Report.class);
-        when(report.getReportId()).thenReturn(1L);
+        when(report.getId()).thenReturn(1L);
 
         // Создаем фиктивный объект `ReportPhotoRepository`
         ReportPhotoRepository reportPhotoRepository = mock(ReportPhotoRepository.class);
 
         // Создаем фиктивный объект `ReportRepository`
         ReportRepository reportRepository = mock(ReportRepository.class);
+        // Создаем фиктивный объект `TelegramBot`
+        TelegramBot telegramBot = mock(TelegramBot.class);
+        // Создаем фиктивный объект `ClientRepository`
+        ClientRepository clientRepository = mock(ClientRepository.class);
+
         when(reportRepository.getReferenceById(1L)).thenReturn(report);
 
         // Создаем экземпляр класса `ReportPhotoService`
-        ReportPhotoService reportPhotoService = new ReportPhotoService(reportPhotoRepository, reportRepository);
+        ReportPhotoService reportPhotoService = new ReportPhotoService(
+                reportPhotoRepository,
+                reportRepository,
+                telegramBot,
+                clientRepository);
 
         // Вызываем метод `uploadReportPhoto()`
         reportPhotoService.uploadReportPhoto(1L, file);
@@ -63,48 +75,51 @@ public class ReportPhotoServiceTest {
 
         // Создаем фиктивный объект `Report`
         Report report = mock(Report.class);
-        when(report.getReportId()).thenReturn(1L);
+        when(report.getId()).thenReturn(1L);
 
         // Создаем фиктивный объект `ReportPhotoRepository`
         ReportPhotoRepository reportPhotoRepository = mock(ReportPhotoRepository.class);
 
         // Создаем фиктивный объект `ReportRepository`
         ReportRepository reportRepository = mock(ReportRepository.class);
+        // Создаем фиктивный объект `TelegramBot`
+        TelegramBot telegramBot = mock(TelegramBot.class);
+        // Создаем фиктивный объект `ClientRepository`
+        ClientRepository clientRepository = mock(ClientRepository.class);
+
+
         when(reportRepository.getReferenceById(1L)).thenReturn(report);
 
         // Создаем экземпляр класса `ReportPhotoService`
-        ReportPhotoService reportPhotoService = new ReportPhotoService(reportPhotoRepository, reportRepository);
-
+        ReportPhotoService reportPhotoService = new ReportPhotoService(
+                reportPhotoRepository,
+                reportRepository,
+                telegramBot,
+                clientRepository);
         // Вызываем метод `uploadReportPhoto()`
         reportPhotoService.uploadReportPhoto(1L, file);
     }
 
-    @Test
-    public String getExtension_positive() {
-        String fileName = "test.jpg";
-        String extension = ReportPhotoService.getExtension(fileName);
-        assertEquals("jpg", extension);
-    }
-
-    @Test
-    public void sendReportPhoto_positive() {
-        byte[] filePhoto = new byte[]{};
-        String caption = "Test caption";
-
-        Report report = new Report();
-        // Получить экземпляр объекта Report
-
-        if (report.getAnimalPhoto() != null) {
-            // Получить данные из объекта ReportPhoto
-            byte[] data = report.getAnimalPhoto().getData();
-        } else {
-            System.out.println("Объект ReportPhoto равен null");
-            // Обработать случай, когда объект ReportPhoto равен null
-        }
-
-        SendPhoto sendPhoto = ReportPhotoService.sendReportPhoto(1L, report);
-        assertEquals("Test caption", caption);
-    }
+//
+//    @Test
+//    public void sendReportPhoto_positive() {
+//        byte[] filePhoto = new byte[]{};
+//        String caption = "Test caption";
+//
+//        Report report = new Report();
+//        // Получить экземпляр объекта Report
+//
+//        if (report.getAnimalPhoto() != null) {
+//            // Получить данные из объекта ReportPhoto
+//            byte[] data = report.getAnimalPhoto().getData();
+//        } else {
+//            System.out.println("Объект ReportPhoto равен null");
+//            // Обработать случай, когда объект ReportPhoto равен null
+//        }
+//
+//        SendPhoto sendPhoto = .sendReportPhoto(1L, report);
+//        assertEquals("Test caption", caption);
+//    }
 
     @Test
     public void getAddressPhoto_positive() {
@@ -116,7 +131,11 @@ public class ReportPhotoServiceTest {
         when(reportRepository.findById(3L)).thenReturn(Optional.of(report));
 
         // Создаем экземпляр класса `ReportPhotoService`
-        ReportPhotoService reportPhotoService = new ReportPhotoService(null, reportRepository);
+        ReportPhotoService reportPhotoService = new ReportPhotoService(
+                null,
+                reportRepository,
+                null,
+                null);
 
         // Вызываем метод `getAddressPhoto()`
         Report result = reportPhotoService.getAddressPhoto();
@@ -135,7 +154,11 @@ public class ReportPhotoServiceTest {
         when(reportRepository.findById(4L)).thenReturn(Optional.of(report));
 
         // Создаем экземпляр класса `ReportPhotoService`
-        ReportPhotoService reportPhotoService = new ReportPhotoService(null, reportRepository);
+        ReportPhotoService reportPhotoService = new ReportPhotoService(
+                null,
+                reportRepository,
+                null,
+                null);
 
         // Вызываем метод `getReportForm()`
         Report result = reportPhotoService.getReportForm();
@@ -144,4 +167,4 @@ public class ReportPhotoServiceTest {
         verify(reportRepository).findById(4L);
     }
 
-}*/
+}

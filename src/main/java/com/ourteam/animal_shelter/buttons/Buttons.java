@@ -7,12 +7,15 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Buttons {
     private final TelegramBot telegramBot;
 
+    @Value("${chat.id.volunteer}")
+    private Long chatIdVolunteer;
     public Buttons(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
     }
@@ -27,20 +30,19 @@ public class Buttons {
         Long chatId = update.message().chat().id();
         if (comMsg.equalsIgnoreCase("/start")) {
             SendResponse response = telegramBot.execute(new SendMessage(chatId, Constants.MEET));
+            InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+            markup.addRow(new InlineKeyboardButton(
+                            "Информация о приюте").callbackData("/c1"),
+                    new InlineKeyboardButton(
+                            "Как взять животное?").callbackData("/c2"));
+            markup.addRow(new InlineKeyboardButton(
+                            "Прислать отчет о питомце").callbackData("/c3"),
+                    new InlineKeyboardButton(
+                            "Позвать волонтера").callbackData("/c4"));
+            SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
+                    replyMarkup(markup);
+            telegramBot.execute(send);
         }
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.addRow(new InlineKeyboardButton(
-                        "Информация о приюте").callbackData("/c1"),
-                new InlineKeyboardButton(
-                        "Как взять животное?").callbackData("/c2"));
-        markup.addRow(new InlineKeyboardButton(
-                        "Прислать отчет о питомце").callbackData("/c3"),
-                new InlineKeyboardButton(
-                        "Позвать волонтера").callbackData("/c4"));
-        SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
-                replyMarkup(markup);
-        telegramBot.execute(send);
-
     }
 
     /**
@@ -105,5 +107,22 @@ public class Buttons {
         SendMessage send = new SendMessage(chat_Id, "Выберете один из вариантов:").
                 replyMarkup(markup);
         telegramBot.execute(send);
+    }
+
+    public void buttonsStage_volunteer(Update update) {
+        long chatId = update.message().chat().id();
+        String comMsg = update.message().text();
+        if (comMsg.equalsIgnoreCase("/imvolunteer") && chatIdVolunteer == chatId) {
+            SendResponse response = telegramBot.execute(new SendMessage(chatId, "Привет! Это меню для волонтера."));
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.addRow(new InlineKeyboardButton(
+                        "Пользователи, которые не отправили отчет").callbackData("/v1"));
+        markup.addRow(new InlineKeyboardButton(
+                        "Отправить предупреждение пользователю").callbackData("/v2"));
+        markup.addRow(new InlineKeyboardButton(
+                        "У кого закончился закончился испытательный срок").callbackData("/v3"));
+        SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
+                replyMarkup(markup);
+        telegramBot.execute(send);}
     }
 }

@@ -1,7 +1,8 @@
 package com.ourteam.animal_shelter.service;
 
+import com.ourteam.animal_shelter.model.Dog;
 import com.ourteam.animal_shelter.model.Photo;
-import com.ourteam.animal_shelter.model.ReportPhoto;
+import com.ourteam.animal_shelter.repository.DogRepository;
 import com.ourteam.animal_shelter.repository.PhotoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,11 +26,14 @@ public class PhotoService {
     @Value("${path.to.dog-photo.folder}")
     private String photoDir;
 
-    public PhotoService(PhotoRepository photoRepository) {
-        this.photoRepository = photoRepository;
-    }
-
     private final PhotoRepository photoRepository;
+
+    private final DogRepository dogRepository;
+
+    public PhotoService(PhotoRepository photoRepository, DogRepository dogRepository) {
+        this.photoRepository = photoRepository;
+        this.dogRepository = dogRepository;
+    }
 
     /**
      * Метод реализует загрузку фотографий собак.

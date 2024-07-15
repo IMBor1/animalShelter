@@ -1,5 +1,6 @@
 package com.ourteam.animal_shelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import jakarta.persistence.*;
 /**

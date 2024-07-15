@@ -1,5 +1,6 @@
 package com.ourteam.animal_shelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,9 +27,11 @@ public class Dog {
     private boolean isAdopted;
     @OneToOne
     @JoinColumn(name = "client_id")
+    @JsonIgnore
     private Client client;
     @OneToOne
     @JoinColumn(name = "photo_id")
+    @JsonIgnore
     private Photo photo;
 
     public Dog(long id, String name, int age, boolean isHealthy, boolean isAdopted, Client client) {
@@ -93,6 +96,14 @@ public class Dog {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 
     @Override

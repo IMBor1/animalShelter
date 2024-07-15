@@ -27,9 +27,9 @@ public class Client {
     @Column(name = "probationary_period")
     private int probationaryPeriod;
 
-    public Client() {
-
-    }
+    @OneToMany(mappedBy = "client")
+    @JsonIgnore
+    private List<Report> reports;
 
     public Client(long chatId, String name) {
         this.chatId = chatId;
@@ -42,6 +42,18 @@ public class Client {
         this.name = name;
         this.hasPet = hasPet;
         this.timer = timer;
+    }
+
+    public List<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
+    }
+
+    public Client() {
+
     }
 
     public long getId() {
@@ -125,12 +137,5 @@ public class Client {
                 ", probationaryPeriod=" + probationaryPeriod +
                 '}';
     }
-//
-//    public List<Report> getReport() {
-//        return report;
-//    }
-//
-//    public void setReport(List<Report> report) {
-//        this.report = report;
-//    }
+
 }

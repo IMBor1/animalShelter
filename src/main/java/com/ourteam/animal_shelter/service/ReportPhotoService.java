@@ -124,17 +124,25 @@ public class ReportPhotoService {
      * @param caption текст отчета
      */
     private void saveReport(byte[] file, String caption, Long chatId) {
-            ReportPhoto reportPhoto = new ReportPhoto();
-            Report report = new Report();
-            Client client = clientRepository.findByChatId(chatId);
+        ReportPhoto reportPhoto = new ReportPhoto();
+        Report report = new Report();
+        Client client = clientRepository.findByChatId(chatId);
+        if (client == null) {
+            SendResponse response = telegramBot.execute(new SendMessage(
+                    chatId,
+                    YOU_ARE_NOT_CLIENT));
+        } else {
             reportPhoto.setData(file);
             reportPhotoRepository.save(reportPhoto);
             report.setCaption(caption);
             report.setAnimalPhoto(reportPhoto);
             report.setClient(client);
             reportRepository.save(report);
+            client.getReports().add(report);
+            clientRepository.save(client);
             reportPhoto.setReport(report);
             reportPhotoRepository.save(reportPhoto);
+        }
     }
 
     /**
@@ -146,7 +154,9 @@ public class ReportPhotoService {
         var photo = update.message().photo();
         var document = update.message().document();
         if (caption == null) {
-            SendResponse response = telegramBot.execute(new SendMessage(update.message().chat().id(), WARNING_NO_DESCRIPTION));
+            SendResponse response = telegramBot.execute(
+                    new SendMessage(update.message().chat().id(),
+                            WARNING_NO_DESCRIPTION));
         }
         else if (photo != null ) {
             List<PhotoSize> list = Arrays.stream(photo).toList();

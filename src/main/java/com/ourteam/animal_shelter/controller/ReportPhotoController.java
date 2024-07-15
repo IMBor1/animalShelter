@@ -42,6 +42,7 @@ public class ReportPhotoController {
         reportPhotoService.uploadReportPhoto(reportId, multipartFile);
         return ResponseEntity.ok().build();
     }
+
     @Operation(
             summary = "Выводит список всех отчетов",
             responses = {
@@ -72,6 +73,33 @@ public class ReportPhotoController {
         headers.setContentType(MediaType.IMAGE_JPEG);
         headers.setContentLength(reportPhoto.getData().length);
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(reportPhoto.getData());
+    }
+    @Operation(
+            summary = "Находит отчет по айди",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Найденный отчет"
+                    )
+            }
+    )
+    @GetMapping(value = "/{id}/find-report")
+    public Report findReportById(@PathVariable Long id) {
+        return reportPhotoService.findReportById(id);
+    }
+    @Operation(
+            summary = "Ставит отметку, что отчет проверен",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Отчет проверен"
+                    )
+            }
+    )
+    @PostMapping(value = "/{id}/verified-report")
+    public ResponseEntity<Report> verifiedReport(@PathVariable Long id) {
+        reportPhotoService.verifiedReportById(id);
+        return ResponseEntity.ok().build();
     }
 
 }

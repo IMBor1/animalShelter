@@ -127,6 +127,7 @@ public class ReportPhotoService {
             report.setCaption(caption);
             report.setAnimalPhoto(reportPhoto);
             report.setClient(client);
+            report.setVerified(false);
             reportRepository.save(report);
             reportPhoto.setReport(report);
             reportPhotoRepository.save(reportPhoto);
@@ -181,6 +182,26 @@ public class ReportPhotoService {
      */
     public ReportPhoto getReportPhoto(Long id) {
         return reportPhotoRepository.findReportPhotoByReportId(id).orElseThrow();
+    }
+
+    /**
+     * Поиск отчета по айди
+     * @param reportId айди отчета
+     * @return объект отчет {@link Report}
+     */
+    public Report findReportById(Long reportId) {
+        return reportRepository.findById(reportId).orElseThrow();
+    }
+
+    /**
+     * Помечает отчет, что он проверен волонтером, по айди.
+     * @param reportId айди отчета
+     * @return проверенный отчет {@link Report}
+     */
+    public Report verifiedReportById(Long reportId) {
+        Report report = findReportById(reportId);
+        report.setVerified(true);
+        return reportRepository.save(report);
     }
 
 }

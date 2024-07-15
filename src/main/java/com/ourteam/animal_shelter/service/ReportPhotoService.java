@@ -12,7 +12,9 @@ import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
+import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.ourteam.animal_shelter.constants.Constants.WARNING_NO_DESCRIPTION;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
@@ -138,16 +141,18 @@ public class ReportPhotoService {
      * @param update объект класса {@link Update}
      */
     public void uploadReportFromUser(Update update) {
+        String caption = update.message().caption();
         var photo = update.message().photo();
         var document = update.message().document();
-        if (photo != null ) {
-            String caption = update.message().caption();
+        if (caption == null) {
+            SendResponse response = telegramBot.execute(new SendMessage(update.message().chat().id(), WARNING_NO_DESCRIPTION));
+        }
+        else if (photo != null ) {
             List<PhotoSize> list = Arrays.stream(photo).toList();
             String fileId = list.get(list.size() - 1).fileId();
             saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
         }
         else if (document != null) {
-            String caption = update.message().caption();
             String fileId = update.message().document().fileId();
             saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
         }

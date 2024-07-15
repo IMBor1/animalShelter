@@ -1,5 +1,6 @@
 package com.ourteam.animal_shelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import jakarta.persistence.*;
 /**
@@ -19,12 +20,20 @@ public class Photo {
     private Long fileSize;
     private String mediaType;
     private String path;
+    @Lob
+    @JsonIgnore
+    private byte[] data;
+    @OneToOne
+    private Dog dog;
 
     public Photo(Long id, Long fileSize, String mediaType, String path) {
         this.id = id;
         this.fileSize = fileSize;
         this.mediaType = mediaType;
         this.path = path;
+    }
+
+    public Photo() {
     }
 
     public Long getId() {

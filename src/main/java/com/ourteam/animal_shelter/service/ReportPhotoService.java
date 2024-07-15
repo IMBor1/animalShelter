@@ -78,7 +78,7 @@ public class ReportPhotoService {
      * @param fileName - имя файла
      * @return - возращаяет расширение файла в формате строки
      */
-    public String getExtension(String fileName) {
+    private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 

@@ -12,7 +12,9 @@ import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
+import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ourteam.animal_shelter.constants.Constants.SHEDULE;
+import static com.ourteam.animal_shelter.constants.Constants.*;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
@@ -49,7 +51,6 @@ public class ReportPhotoService {
         this.telegramBot = telegramBot;
         this.clientRepository = clientRepository;
     }
-
 
     /**
      * Метод для загрузки фото в базу данных и на жесткий диск
@@ -82,7 +83,7 @@ public class ReportPhotoService {
      * @param fileName - имя файла
      * @return - возращаяет расширение файла в формате строки
      */
-    public String getExtension(String fileName) {
+    private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
@@ -123,17 +124,25 @@ public class ReportPhotoService {
      * @param caption текст отчета
      */
     private void saveReport(byte[] file, String caption, Long chatId) {
-            ReportPhoto reportPhoto = new ReportPhoto();
-            Report report = new Report();
-            Client client = clientRepository.findByChatId(chatId);
+        ReportPhoto reportPhoto = new ReportPhoto();
+        Report report = new Report();
+        Client client = clientRepository.findByChatId(chatId);
+        if (client == null) {
+            SendResponse response = telegramBot.execute(new SendMessage(
+                    chatId,
+                    YOU_ARE_NOT_CLIENT));
+        } else {
             reportPhoto.setData(file);
             reportPhotoRepository.save(reportPhoto);
             report.setCaption(caption);
             report.setAnimalPhoto(reportPhoto);
             report.setClient(client);
             reportRepository.save(report);
+            client.getReports().add(report);
+            clientRepository.save(client);
             reportPhoto.setReport(report);
             reportPhotoRepository.save(reportPhoto);
+        }
     }
 
     /**
@@ -141,16 +150,20 @@ public class ReportPhotoService {
      * @param update объект класса {@link Update}
      */
     public void uploadReportFromUser(Update update) {
+        String caption = update.message().caption();
         var photo = update.message().photo();
         var document = update.message().document();
-        if (photo != null ) {
-            String caption = update.message().caption();
+        if (caption == null) {
+            SendResponse response = telegramBot.execute(
+                    new SendMessage(update.message().chat().id(),
+                            WARNING_NO_DESCRIPTION));
+        }
+        else if (photo != null ) {
             List<PhotoSize> list = Arrays.stream(photo).toList();
             String fileId = list.get(list.size() - 1).fileId();
             saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
         }
         else if (document != null) {
-            String caption = update.message().caption();
             String fileId = update.message().document().fileId();
             saveReport(getBytesFromFilByFileId(fileId),caption, update.message().chat().id());
         }
@@ -185,6 +198,37 @@ public class ReportPhotoService {
      */
     public ReportPhoto getReportPhoto(Long id) {
         return reportPhotoRepository.findReportPhotoByReportId(id).orElseThrow();
+    }
+
+    /**
+     * Поиск отчета по айди
+     * @param reportId айди отчета
+     * @return объект отчет {@link Report}
+     */
+    public Report findReportById(Long reportId) {
+        return reportRepository.findById(reportId).orElseThrow();
+    }
+
+    /**
+     * Помечает отчет, что он проверен волонтером, по айди.
+     * @param reportId айди отчета
+     * @return проверенный отчет {@link Report}
+     */
+    public Report verifiedReportById(Long reportId) {
+        Report report = findReportById(reportId);
+        report.setVerified(true);
+        return reportRepository.save(report);
+    }
+
+    /**
+     * Отправляет предупреждение пользователю, что отчет заполняется некорректно
+     * @param clientId айди клиента
+     */
+    public void sendWarning(Long clientId) {
+        SendResponse response =
+                telegramBot.execute(
+                        new SendMessage(clientRepository.findById(clientId).get().getChatId(),
+                                WARNING_REPORT_NOT_CORRECT));
     }
 
 }

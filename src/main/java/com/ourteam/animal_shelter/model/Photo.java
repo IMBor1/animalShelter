@@ -19,8 +19,10 @@ public class Photo {
     private Long fileSize;
     private String mediaType;
     private String path;
+    @Lob
+    @JsonIgnore
+    private byte[] data;
     @OneToOne
-    @JoinColumn(name = "dog_id")
     private Dog dog;
 
     public Photo(Long id, Long fileSize, String mediaType, String path) {
@@ -30,36 +32,7 @@ public class Photo {
         this.path = path;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public Photo() {
     }
 
 

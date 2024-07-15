@@ -1,5 +1,3 @@
 databaseChangeLog:
   - include:
-      file: liquibase/scripts/AnimalShelterBot.sql
-  - include:
-      file: liquibase/scripts/shelter.sql
+      file: liquibase/scripts/AnimalShelter.sql

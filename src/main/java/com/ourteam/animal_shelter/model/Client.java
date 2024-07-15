@@ -2,7 +2,7 @@ package com.ourteam.animal_shelter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,12 +20,16 @@ public class Client {
     private String name;
     @Column(name = "has_pet")
     private boolean hasPet;
-
     @Column(name = "phone")
     private String phone;
-    @OneToMany
-    @JsonIgnore
-    private List<Report> report;
+    @Column(name = "timer")
+    private LocalDateTime timer;
+    @Column(name = "probationary_period")
+    private int probationaryPeriod;
+
+    public Client() {
+
+    }
 
     public Client(long chatId, String name) {
         this.chatId = chatId;
@@ -33,7 +37,12 @@ public class Client {
 
     }
 
-    public Client() {}
+    public Client(long chatId, String name, boolean hasPet, LocalDateTime timer) {
+        this.chatId = chatId;
+        this.name = name;
+        this.hasPet = hasPet;
+        this.timer = timer;
+    }
 
     public long getId() {
         return id;
@@ -75,18 +84,33 @@ public class Client {
         this.phone = phone;
     }
 
+    public LocalDateTime getTimer() {
+        return timer;
+    }
+
+    public void setTimer(LocalDateTime timer) {
+        this.timer = timer;
+    }
+
+    public int getProbationaryPeriod() {
+        return probationaryPeriod;
+    }
+
+    public void setProbationaryPeriod(int probationaryPeriod) {
+        this.probationaryPeriod = probationaryPeriod;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && Objects.equals(name, client.name) && Objects.equals(phone, client.phone);
+        return id == client.id && chatId == client.chatId && hasPet == client.hasPet && probationaryPeriod == client.probationaryPeriod && Objects.equals(name, client.name) && Objects.equals(phone, client.phone) && Objects.equals(timer, client.timer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, hasPet, phone);
+        return Objects.hash(id, chatId, name, hasPet, phone, timer, probationaryPeriod);
     }
 
     @Override
@@ -96,16 +120,17 @@ public class Client {
                 ", chatId=" + chatId +
                 ", name='" + name + '\'' +
                 ", hasPet=" + hasPet +
-                ", phone=" + phone +
-                '\'' +
+                ", phone='" + phone + '\'' +
+                ", timer=" + timer +
+                ", probationaryPeriod=" + probationaryPeriod +
                 '}';
     }
-
-    public List<Report> getReport() {
-        return report;
-    }
-
-    public void setReport(List<Report> report) {
-        this.report = report;
-    }
+//
+//    public List<Report> getReport() {
+//        return report;
+//    }
+//
+//    public void setReport(List<Report> report) {
+//        this.report = report;
+//    }
 }

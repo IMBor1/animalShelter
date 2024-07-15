@@ -43,7 +43,9 @@ public class ReportPhotoService {
     private final ClientRepository clientRepository;
 
     public ReportPhotoService(ReportPhotoRepository reportPhotoRepository,
-                              ReportRepository reportRepository, TelegramBot telegramBot, ClientRepository clientRepository) {
+                              ReportRepository reportRepository,
+                              TelegramBot telegramBot,
+                              ClientRepository clientRepository) {
         this.reportPhotoRepository = reportPhotoRepository;
         this.reportRepository = reportRepository;
         this.telegramBot = telegramBot;
@@ -130,7 +132,6 @@ public class ReportPhotoService {
             report.setCaption(caption);
             report.setAnimalPhoto(reportPhoto);
             report.setClient(client);
-            report.setVerified(false);
             reportRepository.save(report);
             reportPhoto.setReport(report);
             reportPhotoRepository.save(reportPhoto);

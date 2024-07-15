@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ourteam.animal_shelter.constants.Constants.WARNING_NO_DESCRIPTION;
+import static com.ourteam.animal_shelter.constants.Constants.*;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
@@ -207,6 +207,17 @@ public class ReportPhotoService {
         Report report = findReportById(reportId);
         report.setVerified(true);
         return reportRepository.save(report);
+    }
+
+    /**
+     * Отправляет предупреждение пользователю, что отчет заполняется некорректно
+     * @param clientId айди клиента
+     */
+    public void sendWarning(Long clientId) {
+        SendResponse response =
+                telegramBot.execute(
+                        new SendMessage(clientRepository.findById(clientId).get().getChatId(),
+                                WARNING_REPORT_NOT_CORRECT));
     }
 
 }

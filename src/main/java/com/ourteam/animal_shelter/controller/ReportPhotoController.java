@@ -1,5 +1,6 @@
 package com.ourteam.animal_shelter.controller;
 
+import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.model.Report;
 import com.ourteam.animal_shelter.model.ReportPhoto;
 import com.ourteam.animal_shelter.service.ReportPhotoService;
@@ -74,6 +75,7 @@ public class ReportPhotoController {
         headers.setContentLength(reportPhoto.getData().length);
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(reportPhoto.getData());
     }
+
     @Operation(
             summary = "Находит отчет по айди",
             responses = {
@@ -87,6 +89,7 @@ public class ReportPhotoController {
     public Report findReportById(@PathVariable Long id) {
         return reportPhotoService.findReportById(id);
     }
+
     @Operation(
             summary = "Ставит отметку, что отчет проверен",
             responses = {
@@ -102,4 +105,18 @@ public class ReportPhotoController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(
+            summary = "Отправляет предупреждение клиенту, что отчет заполняется плохо",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Предупрежение отправлено"
+                    )
+            }
+    )
+    @GetMapping(value = "/{id}/send-warning")
+    public ResponseEntity<Client> sendWarningMessage(Long clientId) {
+        reportPhotoService.sendWarning(clientId);
+        return ResponseEntity.ok().build();
+    }
 }

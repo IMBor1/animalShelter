@@ -31,17 +31,22 @@ public class Client {
     @JsonIgnore
     private List<Report> reports;
 
+    @OneToOne
+    @JsonIgnore
+    private Dog dog;
+
     public Client(long chatId, String name) {
         this.chatId = chatId;
         this.name = name;
 
     }
 
-    public Client(long chatId, String name, boolean hasPet, LocalDateTime timer) {
+    public Client(long chatId, String name, boolean hasPet, LocalDateTime timer, Dog dog) {
         this.chatId = chatId;
         this.name = name;
         this.hasPet = hasPet;
         this.timer = timer;
+        this.dog = dog;
     }
 
     public List<Report> getReports() {
@@ -138,4 +143,11 @@ public class Client {
                 '}';
     }
 
+    public Dog getDog() {
+        return dog;
+    }
+
+    public void setDog(Dog dog) {
+        this.dog = dog;
+    }
 }

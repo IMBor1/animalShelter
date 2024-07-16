@@ -4,6 +4,7 @@ import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
 import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.repository.ClientRepository;
+import com.ourteam.animal_shelter.service.ClientService;
 import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -32,15 +32,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final ReportPhotoService reportPhotoService;
     private final ClientRepository clientRepository;
+    private final ClientService clientService;
     private final TelegramBot telegramBot;
     private final Buttons buttons;
 
     public TelegramBotUpdatesListener(ReportPhotoService reportPhotoService,
                                       ClientRepository clientRepository,
-                                      TelegramBot telegramBot,
+                                      ClientService clientService, TelegramBot telegramBot,
                                       Buttons buttons) {
         this.reportPhotoService = reportPhotoService;
         this.clientRepository = clientRepository;
+        this.clientService = clientService;
         this.telegramBot = telegramBot;
         this.buttons = buttons;
     }
@@ -67,7 +69,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     try {
                         logger.info("Processing update: {}", update);
                         buttons.ButtonsStage_0(update);
-                        buttons.buttonsStage_volunteer(update);
                     } catch (Exception e) {
                         logger.error("update not correct");
                     }
@@ -131,17 +132,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     } else if (text.equalsIgnoreCase("/b12")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                         telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
-                    } else if (text.equalsIgnoreCase("/b13")) {
-                        telegramBot.execute(new SendMessage(chat_Id, Constants.CONGRATULATIONS));
-                        Client client = clientRepository.findByChatId(chat_Id);
-                        if (client != null) {
-                            client.setHasPet(true);
-                            client.setTimer(LocalDateTime.now());
-                            clientRepository.save(client);
-                        } else {
-                            clientRepository.save(new Client(chat_Id, update.callbackQuery().message().chat().username(), true, LocalDateTime.now()));
-                        }
                     }
+                    buttons.listOfPets(text,chat_Id);
+                    clientService.saveClient(update);
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }

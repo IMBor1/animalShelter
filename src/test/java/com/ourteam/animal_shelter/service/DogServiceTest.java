@@ -1,81 +1,100 @@
 package com.ourteam.animal_shelter.service;
 
 
-import com.ourteam.animal_shelter.entity.animal.Dog;
+import com.ourteam.animal_shelter.model.Client;
+import com.ourteam.animal_shelter.model.Dog;
 import com.ourteam.animal_shelter.repository.DogRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class DogServiceTest {
 
-
-    @Mock
-    private DogService dogService;
     @Mock
     private DogRepository dogRepository;
 
+    @InjectMocks
+    private DogService dogService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void testAddDog() {
-        Dog dog = new Dog("Барбос", 5, true,true);
-        when(dogService.save(dog)).thenReturn(true);
-        Boolean t = dogService.save(dog);
-        assertEquals(true, t);
-        verify(dogService).save(dog);
+        Dog dog = new Dog();
+        dogService.addDog(dog);
+
+        verify(dogRepository, times(1)).save(dog);
     }
 
     @Test
     public void testGetDogById() {
-        Dog dog = new Dog("Барбос", 5, true,true);
-        when(dogService.findById(1)).thenReturn(Optional.of(dog));
-        Optional<Dog> foundDog = dogService.findById(1);
-        // Проверяем, что найденная собака соответствует ожидаемой
-        assertEquals(Optional.of(dog), foundDog);
-        verify(dogService).findById(1);
+        long id = 1L;
+        Dog dog = new Dog();
+        when(dogRepository.findById(id)).thenReturn(Optional.of(dog));
+
+        Optional<Dog> retrievedDog = dogService.getDogById(id);
+
+        assertTrue(retrievedDog.isPresent());
+        assertEquals(dog, retrievedDog.get());
     }
 
     @Test
     public void testUpdateDog() {
-        Dog dog = new Dog("Барбос", 5, true,true);
-        when(dogService.updateById(1, "Барбос", 5, true)).thenReturn(1);
-        Integer updated = dogService.updateById(1, "Барбос", 5, true);
-        // Проверяем, что собака была обновлена
-        assertEquals(1, updated);
-        verify(dogService).updateById(1, "Барбос", 5, true);
-    }
-
-    @Test
-    public void testDeleteDogById() {
-        // Создаем тестовую собаку по идентификатору 1
         Dog dog = new Dog();
-        dog.setId(1);
-        dogRepository.save(dog);
-        // Удаляем собаку по ее идентификатору
-        dogService.deleteById(1);
-        // Проверяем, что собака не существует
-        assertFalse(dogRepository.existsById(1));
+        when(dogRepository.save(dog)).thenReturn(dog);
+
+        Dog updatedDog = dogService.updateDog(dog);
+
+        assertEquals(dog, updatedDog);
+        verify(dogRepository, times(1)).save(dog);
     }
 
     @Test
-    public void testGetAllDogs() {
-        List<Dog> dogs = Arrays.asList (new Dog("Барбос", 5, true,true),
-                new Dog("Каштанка", 3, true,true));
-        when(dogService.findAll()).thenReturn(dogs);
-        List<Dog> foundDogs = dogService.findAll();
-        // Проверяем, что список собак соответствует ожидаемому
-        assertEquals(dogs, foundDogs);
-        verify(dogService).findAll();
+    public void testDeleteDog() {
+        long id = 1L;
+        dogService.deleteDog(id);
+
+        verify(dogRepository, times(1)).deleteById(id);
     }
 
+    @Test
+    public void testGetAll() {
+        List<Dog> dogs = Arrays.asList(new Dog(), new Dog());
+        when(dogRepository.findAll()).thenReturn(dogs);
+
+        List<Dog> retrievedDogs = dogService.getAll();
+
+        assertEquals(dogs, retrievedDogs);
+    }
+
+    @Test
+    public void testDogToAdopt() {
+        long id = 1L;
+        Dog dog = new Dog();
+        Client client = new Client();
+
+        when(dogRepository.findById(id)).thenReturn(Optional.of(dog));
+        when(dogRepository.save(dog)).thenReturn(dog);
+
+        Dog adoptedDog = dogService.dogToAdopt(id, client);
+
+        assertEquals(dog, adoptedDog);
+        assertTrue(adoptedDog.isAdopted());
+        assertEquals(client, adoptedDog.getClient());
+        verify(dogRepository, times(1)).findById(id);
+        verify(dogRepository, times(1)).save(dog);
+    }
 }

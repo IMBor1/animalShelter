@@ -9,7 +9,7 @@ import java.util.List;
 public interface ClientRepository extends JpaRepository<Client, Long> {
    public Client findByChatId(long chat_Id);
 
-   public List<Client> findAllByTimerLessThan(LocalDateTime time);
+//
 
    public List<Client> findAllByProbationaryPeriodLessThan(int probationaryPeriod);
 }

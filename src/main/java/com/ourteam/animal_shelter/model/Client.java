@@ -2,7 +2,6 @@ package com.ourteam.animal_shelter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -24,15 +23,17 @@ public class Client {
     @Column(name = "phone")
     private String phone;
     @Column(name = "timer")
-    private LocalDateTime timer;
+    private Integer timer;
     @Column(name = "probationary_period")
     private int probationaryPeriod;
+
     @OneToMany(mappedBy = "client")
     @JsonIgnore
     private List<Report> reports;
-    public Client() {
 
-    }
+    @OneToOne
+    @JsonIgnore
+    private Dog dog;
 
     public Client(long chatId, String name) {
         this.chatId = chatId;
@@ -40,11 +41,25 @@ public class Client {
 
     }
 
-    public Client(long chatId, String name, boolean hasPet, LocalDateTime timer) {
+    public Client(long chatId, String name, boolean hasPet, Integer timer, Dog dog, int probationaryPeriod) {
         this.chatId = chatId;
         this.name = name;
         this.hasPet = hasPet;
         this.timer = timer;
+        this.dog = dog;
+        this.probationaryPeriod = probationaryPeriod;
+    }
+
+    public List<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
+    }
+
+    public Client() {
+
     }
 
     public long getId() {
@@ -87,13 +102,10 @@ public class Client {
         this.phone = phone;
     }
 
-    public LocalDateTime getTimer() {
+    public Integer getTimer() {
         return timer;
     }
 
-    public void setTimer(LocalDateTime timer) {
-        this.timer = timer;
-    }
 
     public int getProbationaryPeriod() {
         return probationaryPeriod;
@@ -129,11 +141,15 @@ public class Client {
                 '}';
     }
 
-//    public List<Report> getReport() {
-//        return report;
-//    }
-//
-//    public void setReport(List<Report> report) {
-//        this.report = report;
-//    }
+    public Dog getDog() {
+        return dog;
+    }
+
+    public void setDog(Dog dog) {
+        this.dog = dog;
+    }
+
+    public void setTimer(Integer timer) {
+        this.timer = timer;
+    }
 }

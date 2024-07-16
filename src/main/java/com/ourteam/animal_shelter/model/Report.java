@@ -23,6 +23,15 @@ public class Report {
     private String caption;
     @ManyToOne
     private Client client;
+    private boolean isVerified;
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
 
     public Long getId() {
         return id;

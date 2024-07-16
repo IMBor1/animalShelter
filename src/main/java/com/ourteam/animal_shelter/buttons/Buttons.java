@@ -1,23 +1,28 @@
 package com.ourteam.animal_shelter.buttons;
 
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Dog;
+import com.ourteam.animal_shelter.service.DogService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class Buttons {
     private final TelegramBot telegramBot;
 
-    @Value("${chat.id.volunteer}")
-    private Long chatIdVolunteer;
-    public Buttons(TelegramBot telegramBot) {
+    private final DogService dogService;
+
+    public Buttons(TelegramBot telegramBot, DogService dogService) {
         this.telegramBot = telegramBot;
+        this.dogService = dogService;
     }
 
     /**
@@ -109,20 +114,21 @@ public class Buttons {
         telegramBot.execute(send);
     }
 
-    public void buttonsStage_volunteer(Update update) {
-        long chatId = update.message().chat().id();
-        String comMsg = update.message().text();
-        if (comMsg.equalsIgnoreCase("/imvolunteer") && chatIdVolunteer == chatId) {
-            SendResponse response = telegramBot.execute(new SendMessage(chatId, "Привет! Это меню для волонтера."));
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.addRow(new InlineKeyboardButton(
-                        "Пользователи, которые не отправили отчет").callbackData("/v1"));
-        markup.addRow(new InlineKeyboardButton(
-                        "Отправить предупреждение пользователю").callbackData("/v2"));
-        markup.addRow(new InlineKeyboardButton(
-                        "У кого закончился закончился испытательный срок").callbackData("/v3"));
-        SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
-                replyMarkup(markup);
-        telegramBot.execute(send);}
+    /**
+     * Меню выбора питомцев
+     * @param callback возвращаемая команда из преведущего меню
+     * @param chatId чатайди пользователя
+     */
+    public void listOfPets(String callback, Long chatId) {
+        if (callback.equalsIgnoreCase("/b13")) {
+            List<Dog> dogs = dogService.getAll();
+            InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+            for (int i = 0; i < dogs.size(); i++) {
+                markup.addRow(new InlineKeyboardButton(dogs.get(i).getName())
+                        .callbackData("/x" + dogs.get(i).getId()));
+            }
+            SendMessage send = new SendMessage(chatId, "Выберите питомца: ").replyMarkup(markup);
+            telegramBot.execute(send);
+        }
     }
 }

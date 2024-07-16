@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 /**
  * Класс с методами, которые делают запрос к базе данных при помощи аннотации @Scheduled.
  */
@@ -21,8 +19,6 @@ import java.time.LocalDateTime;
 public class TimerService {
     @Value("${chat.id.volunteer}")
     private Long chatIdVolunteer;
-    int countBy30 = 0;
-    int countBy14 = 0;
     private final TelegramBot telegramBot;
     private final ClientRepository clientRepository;
 
@@ -38,73 +34,37 @@ public class TimerService {
      */
     @Scheduled(fixedDelay = 8640000)
     public void reminder1Day() {
-        clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(1)).forEach(
+        clientRepository.findAll().forEach(
                 client -> {
-                    SendResponse execute = telegramBot.execute(new SendMessage(client.getChatId(), Constants.REMINDER));
-                    if (execute.isOk()) {
-                        clientRepository.delete(client);
-                    } else {
-                        logger.error("Failed to send client" + client);
+                    if (client.getTimer() == 0) {
+                        client.setTimer(client.getTimer() + 1);
+                    }
+                    if (client.getTimer() == 1) {
+                        client.setTimer(client.getTimer() + 1);
+                        SendResponse execute = telegramBot.execute(new SendMessage(client.getChatId(), Constants.REMINDER));
+                    } else if(client.getTimer() == 2){
+                        SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                                (client.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
                     }
                 }
 
         );
     }
 
-    /**
-     * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
-     */
-    @Scheduled(fixedDelay = 8640000)
-    public void reminder2Days() {
-        clientRepository.findAllByTimerLessThan(LocalDateTime.now().minusDays(2)).forEach(
-                client -> {
-                    SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                            (client.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
-                    if (execute.isOk()) {
-                        clientRepository.delete(client);
-                    } else {
-                        logger.error("Failed to send client" + client);
-                    }
-                }
-
-        );
-    }
 
     /**
      * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
      */
     @Scheduled(fixedDelay = 8640000)
-    public void reminder30Day() {
-        clientRepository.findAllByProbationaryPeriodLessThan(countBy30).forEach(
+    public void dayCounter() {
+        clientRepository.findAll().forEach(
                 client -> {
-                    countBy30 += 1;
-                    SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                            (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
-                    if (execute.isOk()) {
-                        clientRepository.delete(client);
-                    } else {
-                        logger.error("Failed to send client" + client);
+                    if (client.getProbationaryPeriod() == 0) {
+                        SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                                (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
                     }
-                }
+                    client.setProbationaryPeriod(client.getProbationaryPeriod() - 1);
 
-        );
-    }
-
-    /**
-     * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
-     */
-    @Scheduled(fixedDelay = 8640000)
-    public void reminder14Day() {
-        clientRepository.findAllByProbationaryPeriodLessThan(countBy14).forEach(
-                client -> {
-                    countBy14 += 1;
-                    SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                            (client.getChatId() + Constants.PROBATIONARY_PERIOD_14_DAYS_HAS_ENDED)));
-                    if (execute.isOk()) {
-                        clientRepository.delete(client);
-                    } else {
-                        logger.error("Failed to send client" + client);
-                    }
                 }
 
         );

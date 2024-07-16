@@ -139,6 +139,8 @@ public class ReportPhotoService {
             report.setClient(client);
             reportRepository.save(report);
             client.getReports().add(report);
+            client.setProbationaryPeriod(client.getProbationaryPeriod() - 1);
+            client.setTimer(0);
             clientRepository.save(client);
             reportPhoto.setReport(report);
             reportPhotoRepository.save(reportPhoto);

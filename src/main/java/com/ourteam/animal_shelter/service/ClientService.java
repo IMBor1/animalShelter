@@ -39,7 +39,8 @@ public class ClientService {
             if (client != null) {
                 if (client.getDog() == null) {
                     client.setHasPet(true);
-                    client.setTimer(LocalDateTime.now());
+                    client.setProbationaryPeriod(30);
+                    client.setTimer(0);
                     dog.setClient(client);
                     dogService.updateDog(dog);
                     client.setDog(dog);
@@ -56,8 +57,9 @@ public class ClientService {
                         update.callbackQuery().message().chat().id(),
                         update.callbackQuery().message().chat().username(),
                         true,
-                        LocalDateTime.now(),
-                        dog
+                        0,
+                        dog,
+                        30
                 ));
                 telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(),
                         "Поздравляем вы усыновили питомца: " + dog.getName()));

@@ -106,7 +106,7 @@ public class ReportPhotoService {
      * @return - возвращает экземпляр класса {@link Report}
      */
     public Report getAddressPhoto() {
-        return reportRepository.findById(1L).get();
+        return reportRepository.findById(1L).orElseThrow();
     }
 
     /**
@@ -114,7 +114,7 @@ public class ReportPhotoService {
      * @return - возвращает экземпляр класса {@link Report}
      */
     public Report getReportForm() {
-        return reportRepository.findById(2L).get();
+        return reportRepository.findById(2L).orElseThrow();
     }
 
 

@@ -81,7 +81,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         buttons.buttonsStage_1(update);
                     } else if (text.equalsIgnoreCase("/c2")) {
                         buttons.buttonsStage_2(update);
-                    } else if (update.callbackQuery().data().equalsIgnoreCase("/c4")) {
+                    } else if (text.equalsIgnoreCase("/c3")) {
+                        telegramBot.execute(reportPhotoService.sendReportPhoto(
+                                        chat_Id,
+                                        reportPhotoService.getReportForm()
+                                )
+                        );
+                    } else if (text.equalsIgnoreCase("/c4")) {
                         telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
                         telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
                     }
@@ -89,7 +95,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     if (text.equalsIgnoreCase("/a1")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
                     } else if (text.equalsIgnoreCase("/a2")) {
-                        telegramBot.execute(reportPhotoService.sendReportPhoto(chat_Id, reportPhotoService.getAddressPhoto()));
+                        telegramBot.execute(reportPhotoService.sendReportPhoto(
+                                        chat_Id,
+                                        reportPhotoService.getAddressPhoto()
+                        ));
                     } else if (text.equalsIgnoreCase("/a3")) {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
                     } else if (text.equalsIgnoreCase("/a4")) {
@@ -133,7 +142,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                         telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
                     }
-                    buttons.listOfPets(text,chat_Id);
+                    buttons.listOfPets(text, chat_Id);
                     clientService.saveClient(update);
                 } catch (Exception e) {
                     logger.error("update not correct");

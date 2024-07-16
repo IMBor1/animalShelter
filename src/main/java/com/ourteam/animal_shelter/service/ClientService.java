@@ -37,14 +37,20 @@ public class ClientService {
             Client client = getByChatId(update.callbackQuery().message().chat().id());
             Dog dog = dogService.getDogById(idDog).orElseThrow();
             if (client != null) {
-                client.setHasPet(true);
-                client.setTimer(LocalDateTime.now());
-                dog.setClient(client);
-                dogService.updateDog(dog);
-                client.setDog(dog);
-                clientRepository.save(client);
-                telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(),
-                        "Поздравляем вы усыновили питомца: " + dog.getName()));
+                if (client.getDog() == null) {
+                    client.setHasPet(true);
+                    client.setTimer(LocalDateTime.now());
+                    dog.setClient(client);
+                    dogService.updateDog(dog);
+                    client.setDog(dog);
+                    clientRepository.save(client);
+                    telegramBot.execute(new SendMessage(
+                            update.callbackQuery().message().chat().id(),
+                            "Поздравляем вы усыновили питомца: " + dog.getName()));
+                }
+                telegramBot.execute(new SendMessage(
+                        update.callbackQuery().message().chat().id(),
+                        "У вас уже есть питомец: " + client.getDog().getName()));
             } else {
                 clientRepository.save(new Client(
                         update.callbackQuery().message().chat().id(),

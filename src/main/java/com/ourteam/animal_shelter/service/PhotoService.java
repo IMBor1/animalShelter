@@ -73,7 +73,7 @@ public class PhotoService {
     /**
      * Берет расширение от имени файла
      * @param fileName - имя файла
-     * @return - возращаяет расширение файла в формате строки
+     * @return - возвращаяет расширение файла в формате строки
      */
     private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);

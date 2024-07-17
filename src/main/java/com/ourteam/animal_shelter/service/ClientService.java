@@ -3,6 +3,7 @@ package com.ourteam.animal_shelter.service;
 import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.model.Dog;
 import com.ourteam.animal_shelter.repository.ClientRepository;
+import com.ourteam.animal_shelter.repository.DogRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -15,12 +16,14 @@ import org.springframework.stereotype.Service;
 public class ClientService {
     private final ClientRepository clientRepository;
     private final DogService dogService;
+    private final DogRepository dogRepository;
 
     private final TelegramBot telegramBot;
 
-    public ClientService(ClientRepository clientRepository, DogService dogService, TelegramBot telegramBot) {
+    public ClientService(ClientRepository clientRepository, DogService dogService, DogRepository dogRepository, TelegramBot telegramBot) {
         this.clientRepository = clientRepository;
         this.dogService = dogService;
+        this.dogRepository = dogRepository;
         this.telegramBot = telegramBot;
     }
 
@@ -39,10 +42,11 @@ public class ClientService {
                     client.setHasPet(true);
                     client.setProbationaryPeriod(30);
                     client.setTimer(0);
-                    dog.setClient(client);
-                    dogService.updateDog(dog);
                     client.setDog(dog);
+                    dog.setClient(client);
+                    dog.setAdopted(true);
                     clientRepository.save(client);
+                    dogRepository.save(dog);
                     telegramBot.execute(new SendMessage(
                             update.callbackQuery().message().chat().id(),
                             "Поздравляем вы усыновили питомца: " + dog.getName()));
@@ -51,14 +55,16 @@ public class ClientService {
                         update.callbackQuery().message().chat().id(),
                         "У вас уже есть питомец: " + client.getDog().getName()));
             } else {
-                clientRepository.save(new Client(
+                dog.setClient(clientRepository.save(new Client(
                         update.callbackQuery().message().chat().id(),
                         update.callbackQuery().message().chat().username(),
                         true,
                         0,
                         dog,
                         30
-                ));
+                )));
+                dog.setAdopted(true);
+                dogRepository.save(dog);
                 telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(),
                         "Поздравляем вы усыновили питомца: " + dog.getName()));
             }

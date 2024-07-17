@@ -25,7 +25,7 @@ public class Client {
     @Column(name = "timer")
     private Integer timer;
     @Column(name = "probationary_period")
-    private int probationaryPeriod;
+    private Integer probationaryPeriod;
 
     @OneToMany(mappedBy = "client")
     @JsonIgnore

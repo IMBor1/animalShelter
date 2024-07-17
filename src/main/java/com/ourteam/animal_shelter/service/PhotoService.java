@@ -4,6 +4,9 @@ import com.ourteam.animal_shelter.model.Dog;
 import com.ourteam.animal_shelter.model.Photo;
 import com.ourteam.animal_shelter.repository.DogRepository;
 import com.ourteam.animal_shelter.repository.PhotoRepository;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendPhoto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -30,9 +33,12 @@ public class PhotoService {
 
     private final DogRepository dogRepository;
 
-    public PhotoService(PhotoRepository photoRepository, DogRepository dogRepository) {
+    private final TelegramBot telegramBot;
+
+    public PhotoService(PhotoRepository photoRepository, DogRepository dogRepository, TelegramBot telegramBot) {
         this.photoRepository = photoRepository;
         this.dogRepository = dogRepository;
+        this.telegramBot = telegramBot;
     }
 
     /**
@@ -92,5 +98,30 @@ public class PhotoService {
         return photoRepository
                 .findAll(PageRequest.of(pageNumber - 1, pageSize))
                 .getContent();
+    }
+
+    /**
+     * Создает объект класса {@link SendPhoto} для отправки фотографии в чат
+     * @param chatId айди чата
+     * @param photo фото собаки, объект класса {@link Photo}
+     * @return объект класса {@link SendPhoto}
+     */
+    public SendPhoto createSendPhoto(Long chatId, Photo photo) {
+        byte[] filePhoto = photo.getData();
+        return new SendPhoto(chatId, filePhoto);
+    }
+
+    /**
+     * Отправляет фотографию собаки в чат в ответ на команду /g из callbackQuery.data
+     * @param update объект класса {@link Update}
+     */
+    public void sendDogPhoto(Update update) {
+        String callback = update.callbackQuery().data();
+        if (callback.startsWith("/g")) {
+            Long idDog = Long.parseLong(callback.replace("/g", ""));
+            telegramBot.execute(createSendPhoto(
+                    update.callbackQuery().message().chat().id(),
+                    photoRepository.findByDogId(idDog).get()));
+        }
     }
 }

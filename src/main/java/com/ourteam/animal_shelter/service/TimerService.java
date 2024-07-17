@@ -63,10 +63,7 @@ public class TimerService {
                         SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                                 (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
                     }
-                    client.setProbationaryPeriod(client.getProbationaryPeriod() - 1);
-
                 }
-
         );
     }
 

@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DogRepository extends JpaRepository<Dog, Long> {
-//    List<Dog> findAllById(Long id); // Поиск cобак по Id
-
+    List<Dog> findAllById(Long id); // Поиск cобак по Id
 }

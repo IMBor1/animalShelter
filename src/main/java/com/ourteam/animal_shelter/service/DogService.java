@@ -79,7 +79,7 @@ public class DogService {
      * @param id идентификатор животного
      * @return обновленная информация о питомце
      */
-    public Dog dogToAdopt(long id, Client client) {
+    public Dog connectDogToClient(long id, Client client) {
         Dog dog = dogRepository.findById(id).get();
         dog.setAdopted(true);
         dog.setClient(client);

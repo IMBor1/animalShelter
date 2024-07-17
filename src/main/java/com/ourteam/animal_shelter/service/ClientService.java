@@ -55,14 +55,16 @@ public class ClientService {
                         update.callbackQuery().message().chat().id(),
                         "У вас уже есть питомец: " + client.getDog().getName()));
             } else {
-                clientRepository.save(new Client(
+                dog.setClient(clientRepository.save(new Client(
                         update.callbackQuery().message().chat().id(),
                         update.callbackQuery().message().chat().username(),
                         true,
                         0,
                         dog,
                         30
-                ));
+                )));
+                dog.setAdopted(true);
+                dogRepository.save(dog);
                 telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(),
                         "Поздравляем вы усыновили питомца: " + dog.getName()));
             }

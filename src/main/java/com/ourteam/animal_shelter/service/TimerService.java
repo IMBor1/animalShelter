@@ -30,45 +30,36 @@ public class TimerService {
     Logger logger = LoggerFactory.getLogger(TimerService.class);
 
     /**
-     * метод делает запрос к базе данных раз в сутки и отправляет сообщение пользователю.
+     *
+     * метод делает запрос к базе данных раз в сутки и отправляет сообщение пользователю и раз в два дня волонтеру.
      */
     @Scheduled(fixedDelay = 8640000)
-    public void reminder1Day() {
+    public void reminder() {
         clientRepository.findAll().forEach(
                 client -> {
-                    if (client.getTimer() == 0) {
-                        client.setTimer(client.getTimer() + 1);
-                    }
-                    if (client.getTimer() == 1) {
-                        client.setTimer(client.getTimer() + 1);
-                        SendResponse execute = telegramBot.execute(new SendMessage(client.getChatId(), Constants.REMINDER));
-                    } else if(client.getTimer() == 2){
-                        SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                                (client.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
+                    if (client.isHasPet()) {
+
+                        if (client.getProbationaryPeriod() == 0) {
+                            SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                                    (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
+                        }
+                        if (client.getTimer() == 0) {
+                            client.setTimer(client.getTimer() + 1);
+                        }
+                        if (client.getTimer() == 1) {
+                            client.setTimer(client.getTimer() + 1);
+                            SendResponse execute = telegramBot.execute(new SendMessage(client.getChatId(), Constants.REMINDER));
+                        } else if (client.getTimer() == 2) {
+                            SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
+                                    (client.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
+                        }
                     }
                 }
-
         );
     }
 
 
-    /**
-     * метод делает запрос к базе данных раз в сутки и отправляет сообщение волонтеру.
-     */
-    @Scheduled(fixedDelay = 8640000)
-    public void dayCounter() {
-        clientRepository.findAll().forEach(
-                client -> {
-                    if (client.getProbationaryPeriod() == 0) {
-                        SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
-                                (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
-                    }
-                    client.setProbationaryPeriod(client.getProbationaryPeriod() - 1);
 
-                }
-
-        );
-    }
 
     /**
      * Метод,который позволяет установить испытательный срок.
@@ -78,7 +69,7 @@ public class TimerService {
      * @param probationaryPeriod
      * @return
      */
-    public Client findByChat_Id(long id_chat, int probationaryPeriod) {
+    public Client setProbationaryPeriodById(long id_chat, Integer probationaryPeriod) {
         Client client = clientRepository.findByChatId(id_chat);
         client.setProbationaryPeriod(probationaryPeriod);
         return clientRepository.save(client);

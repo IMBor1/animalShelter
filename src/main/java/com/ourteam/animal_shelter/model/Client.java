@@ -2,7 +2,7 @@ package com.ourteam.animal_shelter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +25,7 @@ public class Client {
     @Column(name = "timer")
     private Integer timer;
     @Column(name = "probationary_period")
-    private int probationaryPeriod;
+    private Integer probationaryPeriod;
 
     @OneToMany(mappedBy = "client")
     @JsonIgnore

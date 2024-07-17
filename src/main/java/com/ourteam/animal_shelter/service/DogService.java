@@ -1,13 +1,11 @@
 package com.ourteam.animal_shelter.service;
 
+import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.model.Dog;
-
+import com.ourteam.animal_shelter.repository.DogRepository;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import com.ourteam.animal_shelter.model.Client;
-import com.ourteam.animal_shelter.repository.DogRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +13,12 @@ import java.util.Optional;
 @Service
 @Data
 public class DogService {
-    @Autowired
+
     private final DogRepository dogRepository;
+
+    public DogService(DogRepository dogRepository) {
+        this.dogRepository = dogRepository;
+    }
 
 
     /**

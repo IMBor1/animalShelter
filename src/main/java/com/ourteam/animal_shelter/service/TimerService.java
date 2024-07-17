@@ -70,7 +70,6 @@ public class TimerService {
     /**
      * Метод,который позволяет установить испытательный срок.
      * использует метод репозитория findByChatId
-     *
      * @param id_chat            не может быть null
      * @param probationaryPeriod
      * @return

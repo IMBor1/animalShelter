@@ -86,4 +86,12 @@ public class DogService {
         return dogRepository.save(dog);
     }
 
+    /**
+     * Выводи список не усыновленных собак
+     * @return список собак
+     */
+    public List<Dog> findAllDogIsAdopted() {
+        return dogRepository.findAllIsAdopted();
+    }
+
 }

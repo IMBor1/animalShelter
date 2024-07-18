@@ -20,14 +20,5 @@ create table photo
     dog_id     bigint
 );
 
---changeset anton22582258:create_dog
-create table dog
-(
-    id                         bigserial primary key,
-    name                       varchar(255),
-    age                        int,
-    is_healthy                 boolean,
-    is_adopted                 boolean,
-    client_id                    bigint,
-    photo_id                     bigint
-);
+
+

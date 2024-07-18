@@ -7,12 +7,14 @@ import com.ourteam.animal_shelter.repository.DogRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 /**
  * Сервис для работы с Клиентами
  */
 @Service
+@Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
     private final DogService dogService;

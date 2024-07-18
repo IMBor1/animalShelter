@@ -10,6 +10,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -116,17 +117,20 @@ public class Buttons {
 
     /**
      * Меню выбора питомцев
+     *
      * @param callback возвращаемая команда из преведущего меню
-     * @param chatId чатайди пользователя
+     * @param chatId  чатайди пользователя
      */
-    public void listOfPets(String callback, Long chatId) {
-        if (callback.equalsIgnoreCase("/b13")) {
-            List<Dog> dogs = dogService.getAll();
+    @Transactional
+    public void listOfPets(String callback, Long chatId, String receivedCom, String newCom) {
+        if (callback.equalsIgnoreCase(receivedCom)) {
             InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-            for (int i = 0; i < dogs.size(); i++) {
-                markup.addRow(new InlineKeyboardButton(dogs.get(i).getName())
-                        .callbackData("/x" + dogs.get(i).getId()));
-            }
+            dogService.findAllDogIsAdopted().forEach(
+                    dog -> {
+                        markup.addRow(new InlineKeyboardButton(dog.getName())
+                                .callbackData(newCom + dog.getId()));
+                    }
+            );
             SendMessage send = new SendMessage(chatId, "Выберите питомца: ").replyMarkup(markup);
             telegramBot.execute(send);
         }

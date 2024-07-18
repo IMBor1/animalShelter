@@ -6,6 +6,7 @@ import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
  * Класс с методами, которые делают запрос к базе данных при помощи аннотации @Scheduled.
  */
 @Service
+@Transactional
 public class TimerService {
     @Value("${chat.id.volunteer}")
     private Long chatIdVolunteer;

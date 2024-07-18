@@ -5,6 +5,7 @@ import com.ourteam.animal_shelter.constants.Constants;
 import com.ourteam.animal_shelter.model.Client;
 import com.ourteam.animal_shelter.repository.ClientRepository;
 import com.ourteam.animal_shelter.service.ClientService;
+import com.ourteam.animal_shelter.service.PhotoService;
 import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -33,16 +34,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final ReportPhotoService reportPhotoService;
     private final ClientRepository clientRepository;
     private final ClientService clientService;
+
+    private final PhotoService photoService;
     private final TelegramBot telegramBot;
     private final Buttons buttons;
 
     public TelegramBotUpdatesListener(ReportPhotoService reportPhotoService,
                                       ClientRepository clientRepository,
-                                      ClientService clientService, TelegramBot telegramBot,
+                                      ClientService clientService,
+                                      PhotoService photoService,
+                                      TelegramBot telegramBot,
                                       Buttons buttons) {
         this.reportPhotoService = reportPhotoService;
         this.clientRepository = clientRepository;
         this.clientService = clientService;
+        this.photoService = photoService;
         this.telegramBot = telegramBot;
         this.buttons = buttons;
     }
@@ -142,8 +148,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
                         telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
                     }
-                    buttons.listOfPets(text, chat_Id);
+                    buttons.listOfPets(text, chat_Id,"/b13","/x");
                     clientService.saveClient(update);
+                    buttons.listOfPets(text,chat_Id,"/b1","/g");
+                    photoService.sendDogPhoto(update);
                 } catch (Exception e) {
                     logger.error("update not correct");
                 }

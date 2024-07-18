@@ -11,6 +11,6 @@ import java.util.List;
 public interface ClientRepository extends JpaRepository<Client, Long> {
    public Client findByChatId(long chat_Id);
 
-   @Query(value = "Select * from Client WHERE hasPet true", nativeQuery = true)
+   @Query(value = "Select * from Client WHERE has_pet IS true", nativeQuery = true)
    List<Client> getHasPetClients();
 }

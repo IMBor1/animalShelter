@@ -89,7 +89,7 @@ public class DogServiceTest {
         when(dogRepository.findById(id)).thenReturn(Optional.of(dog));
         when(dogRepository.save(dog)).thenReturn(dog);
 
-        Dog adoptedDog = dogService.dogToAdopt(id, client);
+        Dog adoptedDog = dogService.connectDogToClient(id, client);
 
         assertEquals(dog, adoptedDog);
         assertTrue(adoptedDog.isAdopted());

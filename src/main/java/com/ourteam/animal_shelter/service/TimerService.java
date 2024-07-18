@@ -33,20 +33,17 @@ public class TimerService {
      *
      * метод делает запрос к базе данных раз в сутки и отправляет сообщение пользователю и раз в два дня волонтеру.
      */
-    @Scheduled(fixedDelay = 8640000)
+    @Scheduled(cron = "@daily")
     public void reminder() {
-        clientRepository.findAll().forEach(
+        clientRepository.getHasPetClients().forEach(
                 client -> {
-                    if (client.isHasPet()) {
-
+                    client.setProbationaryPeriod(client.getProbationaryPeriod() - 1);
                         if (client.getProbationaryPeriod() == 0) {
                             SendResponse execute = telegramBot.execute(new SendMessage(chatIdVolunteer,
                                     (client.getChatId() + Constants.PROBATIONARY_PERIOD_30_DAYS_HAS_ENDED)));
-                        }
-                        if (client.getTimer() == 0) {
+                        } else if (client.getTimer() == 0) {
                             client.setTimer(client.getTimer() + 1);
-                        }
-                        if (client.getTimer() == 1) {
+                        } else if (client.getTimer() == 1) {
                             client.setTimer(client.getTimer() + 1);
                             SendResponse execute = telegramBot.execute(new SendMessage(client.getChatId(), Constants.REMINDER));
                         } else if (client.getTimer() == 2) {
@@ -54,7 +51,6 @@ public class TimerService {
                                     (client.getChatId() + Constants.REMINDER_TO_VOLUNTEER)));
                         }
                     }
-                }
         );
     }
 

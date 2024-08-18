@@ -1,20 +1,24 @@
 package com.ourteam.animal_shelter.listener;
 
+import com.ourteam.animal_shelter.buttons.Buttons;
 import com.ourteam.animal_shelter.constants.Constants;
+import com.ourteam.animal_shelter.model.Client;
+import com.ourteam.animal_shelter.repository.ClientRepository;
+import com.ourteam.animal_shelter.service.ClientService;
+import com.ourteam.animal_shelter.service.PhotoService;
+import com.ourteam.animal_shelter.service.ReportPhotoService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 /**
  * Класс, в котором принимаются ответы от пользователя, обрабатываются и выдается ответ.
@@ -23,11 +27,31 @@ import java.util.List;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
-
+    @Value("${chat.id.volunteer}")
+    private Long chatIdVolunteer;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
-    private TelegramBot telegramBot;
+    private final ReportPhotoService reportPhotoService;
+    private final ClientRepository clientRepository;
+    private final ClientService clientService;
+
+    private final PhotoService photoService;
+    private final TelegramBot telegramBot;
+    private final Buttons buttons;
+
+    public TelegramBotUpdatesListener(ReportPhotoService reportPhotoService,
+                                      ClientRepository clientRepository,
+                                      ClientService clientService,
+                                      PhotoService photoService,
+                                      TelegramBot telegramBot,
+                                      Buttons buttons) {
+        this.reportPhotoService = reportPhotoService;
+        this.clientRepository = clientRepository;
+        this.clientService = clientService;
+        this.photoService = photoService;
+        this.telegramBot = telegramBot;
+        this.buttons = buttons;
+    }
 
     @PostConstruct
     public void init() {
@@ -35,7 +59,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Метод для взаимодействия бота с пользователем
+     * Метод для взаимодействия бота с пользователем с помощью кнопок
      *
      * @param updates
      * @return ответ на запрос пользователя
@@ -45,41 +69,94 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             if (update.message() != null) {
-                try {
-                    logger.info("Processing update: {}", update);
-                    String comMsg = update.message().text();
-                    Long chatId = update.message().chat().id();
-                    if (comMsg.equalsIgnoreCase("/start")) {
-                        SendResponse response = telegramBot.execute(new SendMessage(chatId, Constants.MEET));
+                if (update.message().photo() != null || update.message().document() != null) {
+                    reportPhotoService.uploadReportFromUser(update);
+                } else {
+                    try {
+                        logger.info("Processing update: {}", update);
+                        buttons.ButtonsStage_0(update);
+                    } catch (Exception e) {
+                        logger.error("update not correct");
                     }
-                    InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Узнать информацию о приюте").callbackData("/c1"),
-                            new InlineKeyboardButton(
-                                    "Как взять животное из приюта").callbackData("/c2"));
-                    markup.addRow(new InlineKeyboardButton(
-                                    "Прислать отчет о питомце").callbackData("/c3"),
-                            new InlineKeyboardButton(
-                                    "Позвать волонтера").callbackData("/c4"));
-                    SendMessage send = new SendMessage(chatId, "Выберете один из вариантов:").
-                            replyMarkup(markup);
-                    telegramBot.execute(send);
-
-                } catch (Exception e) {
-                    logger.error("update not correct");
                 }
             } else if (update.callbackQuery() != null) {
-                String text = update.callbackQuery().data();
-                long chat_Id = update.callbackQuery().message().chat().id();
-                String path = " Для связи с волонтером напишите по телефону +7-900-100-20-10";
+                try {
+                    long chat_Id = update.callbackQuery().message().chat().id();
+                    String text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/c1")) {
+                        buttons.buttonsStage_1(update);
+                    } else if (text.equalsIgnoreCase("/c2")) {
+                        buttons.buttonsStage_2(update);
+                    } else if (text.equalsIgnoreCase("/c3")) {
+                        telegramBot.execute(reportPhotoService.sendReportPhoto(
+                                        chat_Id,
+                                        reportPhotoService.getReportForm()
+                                )
+                        );
+                    } else if (text.equalsIgnoreCase("/c4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.PHONE_VOLUNTEER));
+                        telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
+                    }
+                    text = update.callbackQuery().data();
+                    if (text.equalsIgnoreCase("/a1")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.INFO_SHELTER));
+                    } else if (text.equalsIgnoreCase("/a2")) {
+                        telegramBot.execute(reportPhotoService.sendReportPhoto(
+                                        chat_Id,
+                                        reportPhotoService.getAddressPhoto()
+                        ));
+                    } else if (text.equalsIgnoreCase("/a3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.GUARD_CONTACTS));
+                    } else if (text.equalsIgnoreCase("/a4")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES));
+                    } else if (text.equalsIgnoreCase("/a5")) {
+                        clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
+                                update.callbackQuery().message().chat().username()));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
+                        if (update.message().contact().phoneNumber() != null) {
+                            clientRepository.findByChatId(chat_Id).setPhone(update.callbackQuery().message().contact().phoneNumber());
+                        }
+                    } else if (text.equalsIgnoreCase("/a6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                        telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
 
-
-                if (text.equalsIgnoreCase("/c4")) {
-                    telegramBot.execute(new SendMessage(chat_Id, path));
+//                    }  else if (text.equalsIgnoreCase("/b1")) {
+//                    telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_FOR_MEETING_ANIMALS));
+                    } else if (text.equalsIgnoreCase("/b2")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RULES_FOR_MEETING_ANIMALS));
+                    } else if (text.equalsIgnoreCase("/b3")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOCUMENTS_FOR_ADOPTION));
+                    } else if (text.equalsIgnoreCase("/b4")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RULES_TRANSPORTATION));
+                    } else if (text.equalsIgnoreCase("/b5")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_PUPPY));
+                    } else if (text.equalsIgnoreCase("/b6")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.RECOMENDATIONS_FOR_HOUSE_FOR_DOG));
+                    } else if (text.equalsIgnoreCase("/b7")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.RECOMENDATIONS_FOR_HOUSE_FOR_INVALID_PETS));
+                    } else if (text.equalsIgnoreCase("/b8")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOGS_HANDLERS_ADVICE_ON_PRIMARY_COMUNICATION));
+                    } else if (text.equalsIgnoreCase("/b9")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.DOG_HANDLERS));
+                    } else if (text.equalsIgnoreCase("/b10")) {
+                        telegramBot.execute(new SendMessage(update.callbackQuery().message().chat().id(), Constants.REASONS_FOR_REFUSAL));
+                    } else if (text.equalsIgnoreCase("/b11")) {
+                        clientRepository.save(new Client(update.callbackQuery().message().chat().id(),
+                                update.callbackQuery().message().chat().username()));
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.CALL_BACK));
+                    } else if (text.equalsIgnoreCase("/b12")) {
+                        telegramBot.execute(new SendMessage(chat_Id, Constants.PHONE_VOLUNTEER));
+                        telegramBot.execute(new SendMessage(chatIdVolunteer, chat_Id + Constants.MESSAGE_TO_CLIENT));
+                    }
+                    buttons.listOfPets(text, chat_Id,"/b13","/x");
+                    clientService.saveClient(update);
+                    buttons.listOfPets(text,chat_Id,"/b1","/g");
+                    photoService.sendDogPhoto(update);
+                } catch (Exception e) {
+                    logger.error("update not correct");
                 }
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
-
 }

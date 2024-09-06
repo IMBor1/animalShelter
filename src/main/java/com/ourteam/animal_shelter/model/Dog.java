@@ -25,6 +25,7 @@ public class Dog {
     private int age;
     private boolean isHealthy;
     private boolean isAdopted;
+
     @OneToOne
     @JoinColumn(name = "client_id")
     @JsonIgnore
